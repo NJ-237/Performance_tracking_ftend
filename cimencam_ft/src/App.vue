@@ -1,85 +1,52 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+<template>
+  <!-- <h1>login-tried</h1> -->
+   <!-- <login-form/>  -->
+    <!-- <div class="container"> -->
+      <!-- <div class="row">
+        <div class="col-md-12"> -->
+              <div id="app">
+                <router-view></router-view>
+              </div>
+        <!-- </div>
+      </div> -->
+    <!-- </div> -->
+ 
+  <!-- <cro-operator/> -->
+  <!-- <registration-form/> -->
+
+</template>
+<script>
+// import Cro_Operator from '../src/components/Cro_Operator.vue'
+// import LoginForm from '../src/components/LoginForm.vue'
+// import RegistrationForm from './components/RegistrationForm.vue';
+
+
+
+    export default {
+    name: 'App',
+    components:{
+    // 'cro-operator':Cro_Operator,
+    // 'login-form':LoginForm,
+    // 'registration-form' : RegistrationForm,
+    }
+    ,
+      data() {
+        return {
+          
+        };
+      }
+    };
+
 </script>
 
-<template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
 
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
-    </div>
-  </header>
-
-  <RouterView />
-</template>
-
-<style scoped>
-header {
-  line-height: 1.5;
-  max-height: 100vh;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-}
+<style>
+     /* #app > div {
+    border: dashed black 1px;
+    display: inline-block;
+    margin: 10px;
+    padding: 10px;
+    background-color: lightgreen;
+  } */
 </style>
