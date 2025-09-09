@@ -9,69 +9,40 @@
 </head>
 <body>
      <div class="container">
-        <div class="form-section sign-in">
-            <form action="#" @submit.prevent="handlelogin()" method="post">
+        <div   class="form-section sign-in">
+
+          
+            <form action="#" @submit.prevent="handlelogin" method="post">
                 <div class="img_logo">
                     <img src="C:\projects\cimencam_app\frontend\Performance_tracking_ftend\cimencam_ft\src\assets\img\10_48_34_cimencam_logo.png" alt="CIMENCAM Logo">
                     <div>Sign In</div>
                 </div>
                 
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="eamil" id="email" class="form-input" placeholder="Enter your email"  v-model="email" v-on:keypress.enter="addUser" >
+                    <label for="Username">Username</label>
+                    <input type="text" id="username" class="form-input" placeholder="Enter your usename"  v-model="credentials.username"  required />
                     <!-- <div class="error" v-if ="errors.email">{{ errors.email }}</div> -->
                 </div>
                 
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" class="form-input"  placeholder="Enter your password"  v-model="password" v-on:keypress.enter="addUser" >
+                    <input type="password" id="password" class="form-input"  placeholder="Enter your password"  v-model="credentials.password"  required />
                     <!-- <div class="error" v-if ="errors.password">{{ password.email }}</div> -->
 
                 </div>
                 
-                <!-- <div class="role-title">Role:</div> -->
-                
-                 <!-- <div class="Roles">
-                    <label>
-                        <input type="radio" name="role" value="CDQ"  v-model="CDQ" v-on:keypress.enter="addUser" >
-                        Chef de quart
-                    </label>
-                    
-                    <label>
-                        <input type="radio" name="role" value="CRO"  v-model="CRO" v-on:keypress.enter="addUser" >
-                        CRO
-                    </label>
-                    
-                    <label>
-                        <input type="radio" name="role" value="PAT"  v-model="PAT" v-on:keypress.enter="addUser" >
-                        Patroller
-                    </label>
-                    
-                    <label>
-                        <input type="radio" name="role" value="PAC"  v-model="PAC" v-on:keypress.enter="addUser" >
-                        Dispatch
-                    </label>
-    
-                    <label>
-                        <input type="radio" name="role" value="PRO"  v-model="PRO" v-on:keypress.enter="addUser" >
-                        Procédé 
-                    </label>
-    
-                    <label> -->
-                        <!-- <input type="radio" name="role" value="Admin"  v-model="Admin" v-on:keypress.enter="addUser" >
-                        Admin
-                    </label>
-    
-                    <label>
-                        <input type="radio" name="role" value="SupAdmin"  v-model="SuperAdmin" v-on:keypress.enter="addUser" >
-                        SuperAdmin
-                    </label>
-                </div>  -->
-                
+                <!-- Display an error message if it exists -->
+                    <div v-if="authStore.error" class="error-message">
+                    <p>{{ authStore.error.detail }}</p>
+                    </div>
+
+
                 <a href="#" class="forgot-password">Forgot your password?</a>
                 
-                <button type="submit" class="form-button">Sign In</button>
-            </form>
+                <button type="submit" class="form-button" :disabled="authStore.loading">
+                        {{ authStore.loading ? 'Signing In...' : 'Sign In' }}
+                 </button>
+             </form>
         </div>
         
         <div class="form-section register">
@@ -82,10 +53,11 @@
             <h3>Welcome to CIMENCAM</h3>
             <p>Your trusted partner in building materials and construction solutions</p>
             
-            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Construction Site">
+            <img src="C:\projects\cimencam_app\frontend\Performance_tracking_ftend\cimencam_ft\src\assets\img\WhatsApp Image 2025-08-23 at 23.48.00_8d9fb9ee.jpg" alt="Construction Site">
             
             <p>Don't have an account yet?</p>
-            <router-link class="nav-link" to="/Register"><button class="form-button register-button" id="registerBtn"><a href="./RegistrationForm.vue">Register</a></button>
+            <router-link  to="/Register" class="form-button register-button" id="registerBtn">
+                Register
             </router-link>
         </div>
     </div>
@@ -97,64 +69,38 @@
 
 
 <script setup> 
-// import { mapState } from 'vuex';
-// import RegistrationVal from './main/RegistrationVal';
- 
-// export default {
-    // data() {
-    //     return {
-    //         email: '',
-    //         password: '',
-    //         errors: [],
-
-    //     };
-    // },
-    // methods: {
-    //     handlelogin(){
-    //         let validations = new RegistrationVal(
-    //             this.email, 
-    //             this.password,
-
-    //         );
-           
-    //         this.errors = validations.checkValidations();
-    //         if (this.errors.length){
-    //             return false;
-    //         }
-
-    //         // Signup Registrations
-
-    //         },
-    //     },
-    // };
- 
-
 // all new 
-import { ref } from   'vue';
-import { useAuthStore } from '../store/auth'
-import { useRouter } from 'vue-router'
+import { ref } from  'vue';
+import { useAuthStore } from '../store/auth';
+import { useRouter } from 'vue-router';
 // import 
 // const auth = useAuthStore()
-// const router = useRouter()
+// const routes = useRouter();
 
-const email = ref('')
-const password = ref('')
-const authStore = useAuthStore()
-const router = useRouter()
-// const CRO = ref('')
-// const PAT = ref('')
-// const PAC = ref('')
-// const CDQ = ref('')
-// const PRO = ref('')
-// const Admin = ref('')
-// const SuperAdmin = ref('')
+const credentials = ref({
+  username :'',
+  password: ''
+});
+
+const authStore = useAuthStore();
+const router = useRouter();
+// const errorMessage = ref('');
+
+
 
 const handlelogin = async () => {
-  await authStore.login(email.value, password.value)
-  router.push('/Dashboard')
-  
-}
+authStore.error = null;
+  const success = await authStore.login(credentials.value);
 
+  if (success) {
+    const userRole = authStore.user?.role;
+    if (userRole === 'admin') {
+      router.push('/DashboardAdmin');
+    } else {
+      router.push('/Dashboard');
+    }
+  }
+};
 
 </script>
 

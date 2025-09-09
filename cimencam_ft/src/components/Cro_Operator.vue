@@ -13,11 +13,14 @@
 <body>
     <div id="app">
         <!-- Sidebar -->
-        <nav class="sidebar" style=" background: #1a2035;
-  color: black;">
-            <div class="sidebar-brand"><img src="../assets/img/10_48_34_cimencam_logo.png"></div>
-            <div class="sidebar-divider"></div>
-           <ul class="nav-links">
+        <nav class="sidebar" style=" background: #1a2035; color: black;">
+        <div class="sidebar-header">
+        <div class="logo">
+          <img src="C:\projects\cimencam_app\frontend\Performance_tracking_ftend\cimencam_ft\src\assets\img\10_48_34_cimencam_logo.png" alt="Logo">
+          <span>Dashboard</span>
+        </div>
+      </div>
+      <ul class="nav-links">
         <li>
           <router-link class="nav-link" to="/dashboard">
             <i class="fas fa-home"></i>
@@ -33,7 +36,7 @@
         <li>
           <router-link class="nav-link" to="/report"> 
             <i class="fas fa-newspaper"></i>
-            <span>Report</span> <option></option>
+            <span>Report</span>
           </router-link>
         </li>
         <li>
@@ -204,6 +207,16 @@
             </div>
         </div>
     </div>
+
+
+
+     
+    <!-- Pop-up Onboarding Form -->
+    
+
+    <!-- Message Box -->
+    
+
     </body>
     </html>
    </Template>
@@ -247,7 +260,9 @@
             // Then update kpiData.value = { ...newData }
             }
 
-            
+            // pop pop form script
+
+           
 
 </script>
 

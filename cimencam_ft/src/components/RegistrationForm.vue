@@ -28,6 +28,7 @@
 
                         <!-- Registration Form -->
                         <form @submit.prevent="handleReg()">
+                            <!-- {% csrf_token %} -->
                             <div class="row">
                                 <!-- Name Field -->
                                 <div class="col-md-6 mb-3">
@@ -69,7 +70,7 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="fas fa-envelope text-primary"></i>
                                         </span>
-                                        <input type="email" id="email" class="form-control border-start-0" v-model.trim="email" placeholder="Enter your email" required>
+                                        <input type="email" id="email" class="form-control border-start-0" v-model="email" placeholder="Enter your email" required>
                                     </div>
                                 </div>
                                 
@@ -118,7 +119,7 @@
                                         <span class="input-group-text bg-light border-end-0">
                                             <i class="fas fa-briefcase text-primary"></i>
                                         </span>
-                                        <select id="myOptions" class="form-select border-start-0" v-model="position" required>
+                                        <select id="myOptions" class="form-select border-start-0" v-model="role" required>
                                             <option value="">--Select Position--</option>
                                             <option value="cro">CRO</option>
                                             <option value="patroller">Patroller</option>
@@ -170,56 +171,40 @@
 <script setup>
 
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 import { useAuthStore } from '../store/auth'
-// import routes from '@/router/routes'
+import routes from '@/router/routes'
 
-// export default {
-//     data() {
-//         return {
-//             username: '',
-//             email: '',
-//             password: '',
-//             phone_number: '',
-//             service_location: '',
-//             position: '',
-//             employee_id: '',
-//             gender: ''
-//         }
-//      }
-// };
+// const routes = useRouter();  
+const authStore = useAuthStore();
+
+const username = ref('');
+const email = ref('');
+const password = ref('');
+const phone_number = ref('');
+const service_location = ref('');
+const gender = ref('');
+const role = ref('');
+const employee_id = ref('');
 
 
 
-const routes = useRouter()  
-
-const username = ref('')
-const email = ref('')
-const password = ref('')
-const Position = ref('')
-const Service_location = ref('')
-const Gender = ref('')
-const Employee_id = ref('')
-const Phone_Number = ref('')
-const authStore = useAuthStore()
-
-
-const successMessage = ref('')
-const errorMessage = ref('')
+const successMessage = ref('');
+const errorMessage = ref('');
 
 async function handleReg() {
-  successMessage.value = ''
-  errorMessage.value = ''
+  successMessage.value = '';
+  errorMessage.value = '';
   try {
     await authStore.register({
     username: username.value,
     email: email.value, 
     password: password.value,
-    Position: Position.value,
-    Service_location: Service_location.value,
-    Gender: Gender.value,
-    Employee_id: Employee_id.value,
-    Phone_Number: Phone_Number.value     
+    phone_number: phone_number.value,
+    service_location: service_location.value,
+    gender: gender.value,
+    role: role.value,
+    employee_id: employee_id.value,   
   })
     successMessage.value = 'Registration successful! Redirecting to login...'
     // redirect after short delay so user can see message
@@ -227,16 +212,18 @@ async function handleReg() {
       routes.push('/login')
     }, 1500)
   } catch (err) {
-    errorMessage.value = 'Registration failed: ' + (err.response?.data || err.message || err)
+     console.error('Registration failed:', err);
+      // Handle specific backend errors
+      if (err.response && err.response.data) {
+      errorMessage.value = JSON.stringify(err.response.data);
+    } else {
+      errorMessage.value = 'Registration failed. Please try again.';
+    }
+    // errorMessage.value = 'Registration failed: ' + (err.response?.data || err.message || err)
   }
 }
 
-// const handleReg = async () => {
-//   await authStore.register(username.value, email.value, password.value)
-//   alert('Registered successfully!')
-// }
-
-  </script>   
+</script>   
   
 <style>
 .container {

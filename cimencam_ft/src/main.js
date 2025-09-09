@@ -14,11 +14,16 @@ import routes from './router/routes.js'
 
 import Chart from 'chart.js/auto'
 import { createPinia } from 'pinia'// new
+    // import { useAuthStore } from './store/auth.js';
+
 
 
 // Make Chart.js available globally
 window.Chart = Chart;
 
+//    // Initialize the auth store here
+//     const authStore = useAuthStore();
+//     authStore.initializeStore();
 
 import App from './App.vue'
 

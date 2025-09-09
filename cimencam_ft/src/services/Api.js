@@ -2,14 +2,30 @@
 import axios from 'axios';
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:8000/api/', // Your Django API URL
+  baseURL: 'http://127.0.0.1:8000/api/', // Your Django API URL
   withCredentials: false,
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token')}` // If using token auth
-  }
+    // 'Authorization': "Token {}".format(),
+  },
 });
+
+// Use a request interceptor to set the Authorization header dynamically
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      // Set the token on every request
+      // config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization = `Token ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
 export default {
   // Shift endpoints
@@ -24,7 +40,7 @@ export default {
   },
   
   // Broyeur endpoints
-  getBroyeurData(shiftId) {
+  getEquipment(shiftId) {
     return apiClient.get(`/shifts/${shiftId}/broyeur_data/`);
   },
   createBroyeurData(data) {
@@ -53,5 +69,9 @@ export default {
   },
   createExpeditionData(data) {
     return apiClient.post('/expedition-data/', data);
-  }
+  },
+
+   login(credentials) {
+    return apiClient.post('login/', credentials);
+  },
 };
