@@ -47,10 +47,10 @@
                 
             </li>
             <li>
-                <router-link class="nav-link" to="/login">
+                <button @click="handleLogout" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>LogOut</span>
-                </router-link>
+                </button>
                 
             </li>
         </ul>
@@ -316,8 +316,8 @@
                                         <td>
                                           <select id="cro1" v-model="CRO1"  class="form-select" required>
                                             <option value="" disabled>Select a CRO</option>
-                                             <option v-for="user in croProfiles" :key="user.id" :value="user.id">
-                                                {{ user.username }}
+                                             <option v-for="cro in cros" :key="cro.user__id" :value="cro.user__username">
+                                                {{ cro.user__username }}
                                             </option>
                                           </select>
                                           
@@ -325,8 +325,10 @@
                                         <td>
                                           <select id="cro1" v-model="CRO2"  class="form-select" required>
                                             <option value="" disabled>Select CRO</option>
-                                            <option v-for="user in croProfiles" :key="user.id" :value="user.id">
-                                                {{ user.username }}
+                                            <option v-for="cro in cros" :key="cro.user__id" :value="cro.user__username">
+
+                                               {{ cro.user__username }}
+                                               
                                             </option>
                                           </select>
                                           
@@ -334,8 +336,8 @@
                                         <td>
                                         <select id="cdq" v-model="shiftData.CDQ" class="form-select" required>
                                             <option value="" disabled selected>Select a CDQ</option>
-                                            <option v-for="user in cdqProfiles" :key="user.id" :value="user.id">
-                                                {{ user.username }}
+                                            <option v-for="cdq in cdqs" :key="cdq.user__id" :value="cdq.user__username">
+                                               {{ cdq.user__username }}
                                             </option>
                                         </select>
                                           
@@ -359,8 +361,8 @@
                                         <td>
                                         <select id="patroller1" v-model="shiftData.Patroller1" class="form-select" required>
                                             <option value="" disabled selected>Select a Patroller</option>
-                                            <option v-for="user in patrollerProfiles" :key="user.id" :value="user.id">
-                                                {{ user.username }}
+                                            <option v-for="patroller in patrollers" :key="patroller.user__id" :value="patroller.user__username">
+                                               {{ patroller.user__username }}
                                             </option>
                                         </select>
                                           
@@ -368,8 +370,8 @@
                                         <td>
                                         <select id="patroller2" v-model="shiftData.Patroller1" class="form-select" required>
                                             <option value="" disabled selected>Select a Patroller</option>
-                                            <option v-for="user in patrollerProfiles" :key="user.id" :value="user.id">
-                                                {{ user.username }}
+                                           <option v-for="patroller in patrollers" :key="patroller.user__id" :value="patroller.user__username">
+                                               {{ patroller.user__username }}
                                             </option>
                                         </select>
                                           
@@ -1340,6 +1342,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { useAuthStore } from '../store/auth';
 import routes from '@/router/routes';
 import axios from 'axios';
+// import { computed } from 'vue';
 
 // import axios from 'axios'; // Or use fetch API
 
@@ -1347,6 +1350,7 @@ import axios from 'axios';
 const authStore = useAuthStore();
 const successMessage = ref('');
 const errorMessage = ref('');
+// const routes = useRouter();
 
 
 const tonnage_stock_receptions = ref(''); // Or whatever initial value makes sense
@@ -1368,12 +1372,15 @@ const APP_MECA = ref('');
 const Laboratin1 = ref('');
 const Laboratin2 = ref('');
 
+// This code is used to call the dfferent operators registered in the backend so that 
+// when the user wants to fill in the form , it should display the name of those present 
+// in the backend as a dropdown with their names as a list
+let cros=[]
+let patrollers=[]
+let cdqs=[]
 
-const croProfiles = ref([]);
-const patrollerProfiles = ref([]);
-const cdqProfiles = ref([]);
 const loading = ref(false);
-const error = ref(null);
+// const error = ref(null);
 
 // Function to fetch all roles at once
 const fetchAllRoles = async () => {
@@ -1381,16 +1388,17 @@ const fetchAllRoles = async () => {
   errorMessage.value = null;
 
   try {
-    const response = await axios.get('http://127.0.0.1:8000/api/Role-drop/');
+    const response = await axios.get('http://127.0.0.1:8000/api/role_drop/');
     
     // Assign the data from the API response to the correct reactive variables
-    croProfiles.value = response.data.CRO;
-    patrollerProfiles.value = response.data.Patroller;
-    cdqProfiles.value = response.data.CDQ;
+    cros= response.data["CRO"];
+    patrollers= response.data["Patroller"];
+    cdqs = response.data["CDQ"];
 
-    console.log("CRO profiles fetched:", croProfiles.value);
-    console.log("Patroller profiles fetched:", patrollerProfiles.value);
-    console.log("CDQ profiles fetched:", cdqProfiles.value);
+    console.log("CRO profiles fetched:", cros);
+    //  alert(cros)
+    console.log("Patroller profiles fetched:", patrollers);
+    console.log("CDQ profiles fetched:", cdqs);
     
   } catch (err) {
     console.error("API call failed:", err);
@@ -1404,6 +1412,20 @@ const fetchAllRoles = async () => {
 onMounted(() => {
   fetchAllRoles();
 });
+
+
+
+// handle logout 
+// Use a computed property to reactively get the user data from the store
+// This ensures the template updates automatically if the user object changes
+// const user = computed(() => authStore.user);
+const handleLogout = async () => {
+  // Call the logout action from the Pinia store
+  await authStore.logout();
+
+  // Redirect the user to the login page after they successfully log out
+  routes.push('/login');
+};
 
 
 

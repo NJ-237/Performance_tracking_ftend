@@ -95,7 +95,7 @@ export const useAuthStore = defineStore('auth', {
     try {
         // Send the login request to your Django backend
         const response = await axios.post(
-            'http://127.0.0.1:8000/api/token/', 
+            'http://127.0.0.1:8000/api/token_auth/', 
            
             // Make sure you send the username field
              {

@@ -73,5 +73,6 @@ export default {
 
    login(credentials) {
     return apiClient.post('login/', credentials);
+    // return apiClient.post('token/', credentials);
   },
 };
