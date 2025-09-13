@@ -2,17 +2,44 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 
 export const useAuthStore = defineStore('auth', {
-    state: () => ({
+  state: () => {
+    const tokenFromStorage = localStorage.getItem('token');
+    const userIdFromStorage = localStorage.getItem('userId');
+    console.log('Initializing store with token from localStorage:', tokenFromStorage);
+    
+    return {
         user: null,
-        token: null,
-        access:null,
+        userId: userIdFromStorage, // Add this
+        token: tokenFromStorage,
+        access: null,
         loading: false,
         error: null
-    }),
+    }
+},
+
+// Add this getter // new
+    getters: {
+         isAuthenticated: (state) => {
+        const token = state.token;
+        return !!token && token !== 'undefined' && token !== 'null' && typeof token === 'string';
+    }
+    },
   actions: {
+
+
+          // In your auth store, add a method to clean corrupted tokens
+      cleanCorruptedToken() {
+          if (this.token === 'undefined' || this.token === 'null') {
+              this.token = null;
+              localStorage.removeItem('token');
+              delete axios.defaults.headers.common['Authorization'];
+              console.log('Cleaned corrupted token');
+          }
+      },
 
     // This action initializes the store by checking for a token
         initializeStore() {
+          // this.token = localStorage.getItem('token');
             if (this.token) {
                 // If a token exists, set the Authorization header for all future requests
                 axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
@@ -88,51 +115,69 @@ export const useAuthStore = defineStore('auth', {
   
 
     // LOGIN ACTION
-   async login(credentials) {
+  async login(credentials) {
     this.loading = true;
     this.error = null;
 
+    
+
     try {
-        // Send the login request to your Django backend
         const response = await axios.post(
             'http://127.0.0.1:8000/api/token_auth/', 
-           
-            // Make sure you send the username field
-             {
-        // username: credentials.username, // or credentials.email, depending on your backend
-        username: credentials.username,// or credentials.email, depending on your backend
-        password: credentials.password
-      }
-
+            {
+                username: credentials.username,
+                password: credentials.password
+            }
         );
-   console.log('Login successful:', response.data);
-        // Assuming your backend returns a token and user data on successful login
-        const { user, access } = response.data;
 
-        // Save the user and token to the Pinia store's state
-        this.user = user;
-        this.token = access;
-    console.log(access)
+        console.log('Login response:', response.data);
+        
+        let accessToken;
+        let userData;
+        
+        // Handle different response formats
+        if (response.data.access) {
+            // Format: { access: 'token', refresh: 'token' }
+            accessToken = response.data.access;
+            userData = response.data.user || null;
+        } else if (response.data.token) {
+            // Format: { token: 'token', user: {...} }
+            accessToken = response.data.token;
+            userData = response.data.user || null;
+        } else if (response.data) {
+            // Format: just the token string
+            accessToken = response.data;
+            userData = null;
+        } else {
+            throw new Error('Invalid response format from server');
+        }
 
-        // Store the token in localStorage for persistent login sessions
-        localStorage.setItem('token',this.token);
-         // Inside login after saving token
-        // axios.defaults.headers.common['Authorization'] = `Bearer ${access}`;
-           axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`;
+        // Validate token
+        if (!accessToken || typeof accessToken !== 'string') {
+            throw new Error('Invalid token received from server');
+        }
+     
+        // Save the user and token
+        this.user = userData;
+        this.token = accessToken;
+        
+        // Store in localStorage
+        localStorage.setItem('token', accessToken);
+        
+        // Set axios header
+        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-        // Return a success indicator
         return true; 
+        
     } catch (err) {
-        // Handle login failure
+        console.error('Login error:', err);
+        
         if (err.response && err.response.data) {
-            // Log the specific error from the server
-            // console.error('Login failed:', err.response.data);
             this.error = err.response.data;
         } else {
-            console.error('Login failed:', 'An unexpected error occurred.');
-            this.error = { detail: 'An error occurred while logging in.' };
+            this.error = { detail: err.message || 'An unexpected error occurred.' };
         }
-        // Return a failure indicator
+        
         return false; 
     } finally {
         this.loading = false;
@@ -147,47 +192,107 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
       localStorage.removeItem('token')
       delete axios.defaults.headers.common['Authorization']
-    }
-  },
+    },
  
-
   //handle shift actions part 1
-    async registershift(shiftData) {
+async registerShift(shiftData) {
       this.loading = true;
       this.error = null;
+        
+     // A simpler token check, as Pinia state is a single source of truth
+    if (!this.token) {
+        this.error = { detail: 'Not authenticated. Please log in first.' };
+        this.loading = false;
+        return false;
+    }
+     
       try {
-        const response_shifts  = await axios.post(
-          'http://127.0.0.1:8000/api/shifts/',
-          {
-            CRO1 : shiftData.CRO1,
-            CRO2: shiftData.CRO2,
-            Patroller1: shiftData.Patroller1,
-            Patroller2: shiftData.Patroller2,
-            CDQ: shiftData.CDQ,
-            APP_ELEC: shiftData.APP_ELEC,
-            APP_MECA: shiftData.APP_MECA,
-            Laboratin1: shiftData.Laboratin1,
-            Laboratin2: shiftData.Laboratin2,
- 
-          }
+        // Send the data to the backend
+        const response_shifts = await axios.post(
+            'http://127.0.0.1:8000/api/shifts/',
+            shiftData
         );
-        console.log('Registration successful:', response_shifts.data, response_shifts.status);
-        console.log(response_shifts.data['id'])
-         return true;
-      
-      } catch (error) {
-                this.error = error.response?.data || { detail: 'Shift registration failed.' };
-                console.error('Shift registration failed:', this.error);
-                return false;     
-               }
-               finally {
-                this.loading = false;
-            }
+        
+        console.log('Shift registration successful!', response_shifts.data);
+        
+        return true;
+    } catch (error) {
+        console.error('Shift registration failed:', error.response?.data || error);
+        this.error = error.response?.data || { detail: 'Shift registration failed.' };
+        return false;
+    } finally {
+        this.loading = false;
+    }
     },
 
 
+     async registerExp(expData) {
+      this.loading = true;
+      this.error = null;
+
+       // Clean any corrupted token first
+    this.cleanCorruptedToken();
+    
+    // Get token with proper validation
+    let token = this.token;
+    
+    // If token is corrupted, try localStorage
+    if (!token || token === 'undefined' || token === 'null') {
+        token = localStorage.getItem('token');
+        // If localStorage also has corrupted token, clean it
+        if (token === 'undefined' || token === 'null') {
+            localStorage.removeItem('token');
+            token = null;
+        }
+    }
+    
+    console.log('Validated token for expedition:', token);
 
 
+            if (!this.token) {
+                this.error = { detail: 'Not authenticated. Please log in first.' };
+                this.loading = false;
+                return false;
+            }
+      
+      try {
+         const response = await axios.post(
+                    'http://127.0.0.1:8000/api/expedition/',
+                    expData, // The data is passed directly without unwrapping .value
+               
+                      {
+                // timeout: 10000, // 10 second timeout
+               headers: {
+                    'Authorization': `Bearer ${token}`, // Use the validated token variable
+                    // 'Content-Type': 'application/json',
+                }
+            }
+                  );
+          console.log('Expedition registration successful:', response.data, response.status);
+                return true;
+            } catch (error) {
+                 // More robust error handling
+        if (error.response) {
+            // Server responded with error status
+            this.error = error.response.data || { 
+                detail: 'Expedition registration failed. Please check your information and try again.' 
+            };
+        } else if (error.request) {
+            // Request made but no response received
+            this.error = { detail: 'Network error: Unable to connect to the server. Please check your connection.' };
+        } else {
+            // Something else went wrong
+            this.error = { detail: 'An unexpected error occurred: ' + error.message };
+        }
+        
+        console.error('Expedition registration failed:', this.error, error);
+        return false;
+    } finally {
+        this.loading = false;
+    }
+  },
+
+ }
 });
 
   

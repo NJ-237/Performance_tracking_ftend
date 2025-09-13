@@ -52,10 +52,10 @@
           </router-link>
         </li>
         <li>
-          <router-link class="nav-link" to="/logout">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>LogOut</span>
-          </router-link>
+            <button @click="handleLogout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>LogOut</span>
+            </button>
         </li>
       </ul>
         </nav>

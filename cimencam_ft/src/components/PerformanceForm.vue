@@ -49,10 +49,10 @@
                 
             </li>
             <li>
-                <router-link class="nav-link" to="/login">
+                <button @click="handleLogout" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>LogOut</span>
-                </router-link>
+                </button>
                 
             </li>
         <!-- Other menu items -->
@@ -227,7 +227,20 @@
 import { ref, computed, onMounted } from 'vue';
 import { Modal } from 'bootstrap';
 // import api from '../services/Api';
+// import { useAuthStore } from '../store/auth';
+// import routes from '@/router/routes';
+// import axios from 'axios';
 
+// const authStore = useAuthStore();
+
+// Handles the logout
+  // const handleLogout  = async () => {
+  //   // Call the logout action from the Pinia store
+  //   await authStore.logout();
+
+  //   // Redirect the user to the login page after they successfully log out
+  //   routes.push('/login');
+  // };
 
 export default {
   setup() {
@@ -285,6 +298,9 @@ export default {
       formData.value.equipment = selectedEquipment.value;
       modalInstance.show();
     };
+
+
+
 
     // Open modal for editing
     const editItem = (index) => {

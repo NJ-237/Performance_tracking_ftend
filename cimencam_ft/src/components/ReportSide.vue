@@ -280,9 +280,9 @@
         </div>
 
         <!-- Shift Data Entry Modal -->
+        <form @submit.prevent="handleshift()" @submit="console.log('Form submitted!')">
         <div class="modal fade" id="shiftModal" ref="shiftModal" tabindex="-1"  >
             <div class="modal-dialog modal-lg modal-dialog-centered">
-            <form action="" @submit.prevent="handleshift">       
                 {% csrf_token %}           
                 <div class="modal-content">
                     <div class="modal-header bg-primary text-white">
@@ -401,15 +401,15 @@
                         
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal" @click="saveShiftData">
+                            <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
                                 <i class="fas fa-save me-1"></i> Save Shift Data
                             </button>
                         </div>
                        
                     </div>
-                </form> 
+                </div>
             </div>
-        </div>
+        </form> 
                                         
         <!-- BROYEUR-1 Modal -->
         <div class="modal fade" id="shiftModal1" ref="shiftModal1" tabindex="-1" >
@@ -557,7 +557,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="saveShiftData">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                             <i class="fas fa-save me-1"></i> Save Shift Data
                         </button>
                     </div>
@@ -709,7 +709,7 @@
                             
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="saveShiftData">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                                     <i class="fas fa-save me-1"></i> Save Shift Data
                                 </button>
                             </div>
@@ -866,7 +866,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="saveShiftData">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                             <i class="fas fa-save me-1"></i> Save Shift Data
                         </button>
                     </div>
@@ -1022,7 +1022,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="saveShiftData">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                             <i class="fas fa-save me-1"></i> Save Shift Data
                         </button>
                     </div>
@@ -1166,7 +1166,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="saveShiftData">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
                             <i class="fas fa-save me-1"></i> Save Shift Data
                         </button>
                     </div>
@@ -1322,7 +1322,7 @@
 
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal" @click="saveShiftData">
+                        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
                             <i class="fas fa-save me-1"></i> Save Shift Data
                         </button>
                     </div>
@@ -1346,13 +1346,17 @@ import axios from 'axios';
 
 // import axios from 'axios'; // Or use fetch API
 
-// const routes = useRouter();  
 const authStore = useAuthStore();
+authStore.initializeStore();
+// const routes = useRouter();
+// const success = ref(false);
+// const error = ref(null);
+
+console.log('Current token:', authStore.token);
+console.log('Token from localStorage:', localStorage.getItem('token'));
+
 const successMessage = ref('');
 const errorMessage = ref('');
-// const routes = useRouter();
-
-
 const tonnage_stock_receptions = ref(''); // Or whatever initial value makes sense
 
 // Add these data properties
@@ -1360,6 +1364,8 @@ const shiftData = ref({
   date: new Date().toISOString().split('T')[0],
   shiftNumber: 1
 });
+
+
 
 
 const CRO1 = ref('');
@@ -1414,11 +1420,7 @@ onMounted(() => {
 });
 
 
-
-// handle logout 
-// Use a computed property to reactively get the user data from the store
-// This ensures the template updates automatically if the user object changes
-// const user = computed(() => authStore.user);
+// Handles the logout
 const handleLogout = async () => {
   // Call the logout action from the Pinia store
   await authStore.logout();
@@ -1428,28 +1430,39 @@ const handleLogout = async () => {
 };
 
 
-
 async function handleshift() {
   successMessage.value = '';
   errorMessage.value = '';
-   try {
-    await authStore.register({
-    CRO1: CRO1.value,
-    CRO2: CRO2.value, 
-    Patroller1: Patroller1.value,
-    Patroller2: Patroller2.value,
-    CDQ: CDQ.value,
-    APP_ELEC: APP_ELEC.value,
-    APP_MECA: APP_MECA.value,
-    Laboratin1: Laboratin1.value,   
-    Laboratin2: Laboratin2.value,   
-  })
+
+    // Check if user is authenticated
+     if (!authStore.token) {
+        errorMessage.value = 'Please login first!';
+        // Wait a moment for the user to see the message before redirecting.
+        setTimeout(() => {
+            routes.push('/login');
+        }, 1500);
+        return;
+    }
+ 
   
-    successMessage.value = 'Registration successful!'
+  try {
+    
+    await authStore.registerShift({
+      CRO1: CRO1.value,
+      CRO2: CRO2.value, 
+      Patroller1: Patroller1.value,
+      Patroller2: Patroller2.value,
+      CDQ: CDQ.value,
+      APP_ELEC: APP_ELEC.value,
+      APP_MECA: APP_MECA.value,
+      Laboratin1: Laboratin1.value,   
+      Laboratin2: Laboratin2.value,  
+  })
+    successMessage.value = 'Registration successful! Redirecting to report...'
+    // alert('Expedition data submitted successfully!');
     // redirect after short delay so user can see message
     setTimeout(() => {
-        // close the modal 
-      routes.push('/Report')
+      routes.push('/report')
     }, 1500)
   } catch (err) {
      console.error('Registration failed:', err);
@@ -1459,11 +1472,11 @@ async function handleshift() {
     } else {
       errorMessage.value = 'Registration failed. Please try again.';
     }
-    // errorMessage.value = 'Registration failed: ' + (err.response?.data || err.message || err)
   }
 }
 
-
+        
+     
   
  const clinker_debut = ref('');
  const clinker_fin = ref('');
@@ -1587,10 +1600,92 @@ const  situation_entree_quart2 = ref('');
 //   const tonnage_stock_receptions = ref('');
 
 
+//Expedition Data
+// const reception_camions_rejets = ref('');
+// const provenance_lieu = ref('');
+const nbre_camion = ref('');
+// const tonnage = ref('');
+// const no_godets_cim_biomasse = ref('');
+// const godets_geocycle_biomasse = ref('');
+// const no_godets_receptions = ref('');
+// const tonnage_stock_receptions = ref('');
 
+// console.log('Current token:', authStore.token);
+// console.log('Is authenticated:', authStore.token ? 'Yes' : 'No');
 
+async function handleExp() {
 
+    // Check if user is authenticated
+    if (!authStore.token) {
+        alert('Please login first!');
+        routes.push('/login');
+        return;
+    }
+  successMessage.value = '';
+  errorMessage.value = '';
+  
+  try {
+    await authStore.registerExp({
+   // Expedition data
+        // Expedition data
+        KK_chargee_nomayos: KK_chargee_nomayos.value,
+        KK_chargee_nomayos_NbreCamion: KK_chargee_nomayos_NbreCamion.value,
+        KK_chargee_nomayos_Tonnage: KK_chargee_nomayos_Tonnage.value,
+        gypse_chargee_nomayos_kk: gypse_chargee_nomayos_kk.value,
+        gypse_chargee_nomayos_NbreCamion: gypse_chargee_nomayos_NbreCamion.value,
+        gypse_chargee_nomayos_Tonnage: gypse_chargee_nomayos_Tonnage.value,
+        gypse_figuil_KK: gypse_figuil_KK.value,
+        gypse_figuil_NbreCamion: gypse_figuil_NbreCamion.value,
+        gypse_figuil_Tonnage: gypse_figuil_Tonnage.value,
+        petcoke_figuil_kk: petcoke_figuil_kk.value,
+        petcoke_figuil_NbreCamion: petcoke_figuil_NbreCamion.value,
+        petcoke_figuil_Tonnage: petcoke_figuil_Tonnage.value,
+        kk_cimaf_kk: kk_cimaf_kk.value,
+        kk_cimaf_NbreCamion: kk_cimaf_NbreCamion.value,
+        kk_cimaf_Tonnage: kk_cimaf_Tonnage.value,
+        kk_dangote_kk: kk_dangote_kk.value,
+        kk_dangote_NbreCamion: kk_dangote_NbreCamion.value,
+        kk_dangote_Tonnage: kk_dangote_Tonnage.value,
+        kk_miraco_kk: kk_miraco_kk.value,
+        kk_miraco_NbreCamion: kk_miraco_NbreCamion.value,
+        kk_miraco_Tonnage: kk_miraco_Tonnage.value,
+        
+        // Reception camions
+        reception_camions_rejets: reception_camions_rejets.value,
+        provenance_lieu: provenance_lieu.value,
+        nbre_camion: nbre_camion.value,
+        tonnage: tonnage.value,
+        
+        // Stock biomasse
+        no_godets_cim_biomasse: no_godets_cim_biomasse.value,
+        godets_geocycle_biomasse: godets_geocycle_biomasse.value,
+        no_godets_receptions: no_godets_receptions.value,
+        tonnage_stock_receptions: tonnage_stock_receptions.value,
+        
+        // Add date and shift information
+       date: selectedDate.value,
+    //    shift: shift.value.shiftNumber 
+  })
+    successMessage.value = 'Registration successful! Redirecting to report...'
+    // alert('Expedition data submitted successfully!');
+    // redirect after short delay so user can see message
+    setTimeout(() => {
+      routes.push('/report')
+    }, 1500)
+  } catch (err) {
+     console.error('Registration failed:', err);
+      // Handle specific backend errors
+      if (err.response && err.response.data) {
+      errorMessage.value = JSON.stringify(err.response.data);
+    } else {
+      errorMessage.value = 'Registration failed. Please try again.';
+    }
+  }
+}
 
+        
+     
+    
 // Similar for broyeur4Data, broyeur5Data, secheurData, portData, expeditionData
 
 // Add these methods
@@ -1636,6 +1731,7 @@ function openShiftModal(shiftNumber) {
 }
 
 function openShiftModal1(shiftNumber) {
+  console.log('Opening shift modal for shift:', shiftNumber);
   modalTitle.value = `BROYEUR-1 - Shift ${shiftNumber} Report - ${selectedDate.value}`;
   shiftData.value.shiftNumber = shiftNumber;
   modalInstance1.show();

@@ -16,8 +16,8 @@ import Chart from 'chart.js/auto'
 import { createPinia } from 'pinia'// new
     // import { useAuthStore } from './store/auth.js';
 
-
-
+import ShiftData from './components/ShiftData.vue'
+// import { useAuthStore } from '../src/store/auth.js';
 // Make Chart.js available globally
 window.Chart = Chart;
 
@@ -30,6 +30,12 @@ import App from './App.vue'
 const app = createApp(App)
 const pinia = createPinia()// new
 
+
+// Initialize auth store after pinia is mounted
+// const authStore = useAuthStore()
+// authStore.initialize()
+
 app.use(pinia)  // ✅ This line is essential , new
 app.use(routes);
 app.mount('#app')
+app.component('Shift-Data', ShiftData)
