@@ -1,5 +1,6 @@
 // src/services/api.js
 import axios from 'axios';
+// import { getAuthToken } from '../store/auth';
 
 const apiClient = axios.create({
   baseURL: 'http://127.0.0.1:8000/api/', // Your Django API URL
@@ -27,6 +28,7 @@ apiClient.interceptors.request.use(
   }
 );
 
+
 export default {
   // Shift endpoints
   getShifts(date) {
@@ -44,7 +46,7 @@ export default {
     return apiClient.get(`/shifts/${shiftId}/broyeur_data/`);
   },
   createBroyeurData(data) {
-    return apiClient.post('/broyeur-data/', data);
+    return apiClient.post('/mill/', data);
   },
   
   // Secheur endpoints
@@ -52,7 +54,7 @@ export default {
     return apiClient.get(`/shifts/${shiftId}/secheur_data/`);
   },
   createSecheurData(data) {
-    return apiClient.post('/secheur-data/', data);
+    return apiClient.post('/dryer/', data);
   },
   
   // Port endpoints
@@ -60,7 +62,7 @@ export default {
     return apiClient.get(`/shifts/${shiftId}/port_data/`);
   },
   createPortData(data) {
-    return apiClient.post('/port-data/', data);
+    return apiClient.post('/port/', data);
   },
   
   // Expedition endpoints
@@ -68,7 +70,7 @@ export default {
     return apiClient.get(`/shifts/${shiftId}/expedition_data/`);
   },
   createExpeditionData(data) {
-    return apiClient.post('/expedition-data/', data);
+    return apiClient.post('/expedition/', data); // All these /expedition/ with the others comes from the url.py calling each of those equipements through their APIs
   },
 
    login(credentials) {

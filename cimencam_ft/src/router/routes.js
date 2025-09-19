@@ -13,7 +13,7 @@ import ReportPerform from '@/components/Admin_Dashboard/ReportPerform.vue'
 import CDQReport from '@/components/Admin_Dashboard/OperatorsReport.vue/CDQReport.vue'
 import CROReport from '@/components/Admin_Dashboard/OperatorsReport.vue/CROReport.vue'
 import PatrollerReport from '@/components/Admin_Dashboard/OperatorsReport.vue/PatrollerReport.vue'
-import tryMethod from '@/components/tryMethod.vue'
+// import tryMethod from '@/components/tryMethod.vue'
 import Profile from '@/components/ProfileForm.vue'
 // import { useAuthStore } from '../store/auth' //New 
 
@@ -31,7 +31,7 @@ const routes = createRouter({
     { path: '/Register', component: RegistrationForm },
     { path: '/Dashboard', component: Dashboard },
     { path: '/Report', name:'Report', component: ReportSide },
-    { path: '/try', name:'try', component: tryMethod },
+    // { path: '/try', name:'try', component: tryMethod },
     { path: '/Profile', name:'profile', component: Profile },
     //  { path: '/Report', name:'Report', component: () => import('../components/ReportSide.vue')},
 

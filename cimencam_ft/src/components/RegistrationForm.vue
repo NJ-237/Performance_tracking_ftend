@@ -124,7 +124,7 @@
                                             <option value="cro">CRO</option>
                                             <option value="patroller">Patroller</option>
                                             <option value="dispatch">Dispatch</option>
-                                            <option value="chef">Chef de Quart</option>
+                                            <option value="chef">CDQ</option>
                                         </select>
                                     </div>
                                 </div>
