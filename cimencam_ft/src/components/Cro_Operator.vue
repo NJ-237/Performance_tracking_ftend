@@ -52,7 +52,7 @@
           </router-link>
         </li>
         <li>
-            <button @click="handleLogout" class="logout-btn">
+            <button style="color: violet; background: #1a2035;"  @click="handleLogout" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>LogOut</span>
             </button>
@@ -71,7 +71,7 @@
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ userName }}</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{ username }}</span>
                                 <img class="user-avatar" :src="userAvatar" alt="User Avatar">
                             </a>
                         </li>
@@ -82,34 +82,42 @@
             <!-- Filters -->
             <div class="container-fluid">
                 <div class="row mb-4">
+                    <!-- <div v-if="userToken"> -->
                     <div class="col-md-3">
                         <label class="form-label">Start Date</label>
-                        <input type="date" class="form-control date-control" v-model="startDate">
+                        <input type="date" id="startDate" class="form-control date-control" v-model="startDate">
                     </div>
+
                     <div class="col-md-3">
                         <label class="form-label">End Date</label>
-                        <input type="date" class="form-control date-control" v-model="endDate">
+                        <input type="date" id="endDate" class="form-control date-control" v-model="endDate">
                     </div>
-                    <div class="col-md-3">
-                        <label class="form-label">Report Type</label>
-                        <select class="form-select date-control" v-model="reportType">
-                            <option value="monthly">Monthly</option>
-                            <option value="weekly">Weekly</option>
-                            <option value="yearly">Yearly</option>
-                        </select>
-                    </div>
+                   
                     <div class="col-md-3 d-flex align-items-end">
-                        <button class="btn apply-btn w-100" @click="fetchData">Apply Filters</button>
+                        <button class="btn apply-btn w-100" @click="fetchData" >Apply Filters</button>
                     </div>
+                  
                 </div>
 
                 <!-- KPI Cards -->
                 <div class="row">
+                     <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card kpi-card kpi-info">
+                            <div class="card-body">
+                                <div class="kpi-title">SHIFT NUMBER</div>
+                                <div class="kpi-value">{{ Shift__shift_number }}</div>
+                                <div class="kpi-subtitle">
+                                    <span class="trend-down"><i class="fas fa-arrow-down"></i> {{ kpiData.errorsTrend }}</span>
+                                    Active
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-xl-4 col-md-6 mb-4">
                         <div class="card kpi-card kpi-primary">
                             <div class="card-body">
                                 <div class="kpi-title">TOTAL OPTIMISATION</div>
-                                <div class="kpi-value">{{ kpiData.incidents }}</div>
+                                <div class="kpi-value">{{ kpiData.total_optimisation }}</div>
                                 <div class="kpi-subtitle">
                                     <span class="trend-up"><i class="fas fa-arrow-up"></i> {{ kpiData.incidentsTrend }}</span>
                                     Today
@@ -120,7 +128,7 @@
                     <div class="col-xl-4 col-md-6 mb-4">
                         <div class="card kpi-card kpi-success">
                             <div class="card-body">
-                                <div class="kpi-title">TOTAL PERFORMANCE</div>
+                                <div class="kpi-title">TOTAL ENVIRONMENT</div>
                                 <div class="kpi-value">{{ kpiData.performance }}%</div>
                                 <div class="kpi-subtitle">This month</div>
                             </div>
@@ -129,7 +137,20 @@
                     <div class="col-xl-4 col-md-6 mb-4">
                         <div class="card kpi-card kpi-info">
                             <div class="card-body">
-                                <div class="kpi-title">TOTAL PRODUCTION</div>
+                                <div class="kpi-title">TOTAL PRODUCTION MILL</div>
+                                <div class="kpi-value">{{ kpiData.total_production }}%</div>
+                                <div class="kpi-subtitle">
+                                    <span class="trend-down"><i class="fas fa-arrow-down"></i> {{ kpiData.errorsTrend }}</span>
+                                    Active
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card kpi-card kpi-info">
+                            <div class="card-body">
+                                <div class="kpi-title">TOTAL PRODUCTION SECHEUR</div>
                                 <div class="kpi-value">{{ kpiData.errors }}</div>
                                 <div class="kpi-subtitle">
                                     <span class="trend-down"><i class="fas fa-arrow-down"></i> {{ kpiData.errorsTrend }}</span>
@@ -138,11 +159,24 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-xl-4 col-md-6 mb-4">
+                        <div class="card kpi-card kpi-info">
+                            <div class="card-body">
+                                <div class="kpi-title">TOTAL QUALITY</div>
+                                <div class="kpi-value">{{ kpiData.total_qualites }}</div>
+                                <div class="kpi-subtitle">
+                                    <span class="trend-down"><i class="fas fa-arrow-down"></i> {{ kpiData.errorsTrend }}</span>
+                                    Active
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                   
                 </div>
 
                 <!-- Charts -->
                 <div class="row">
-                    <!-- Revenue Chart -->
+                    <!-- Revenue Chart Histogram -->
                     <div class="col-xl-8">
                         <div class="card shadow mb-4">
                             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -154,8 +188,14 @@
                                 </div>
                             </div>
                             <div class="card-body">
-                                <div class="chart-container">
-                                    <canvas ref="revenueChart"></canvas>
+                                <div class="histogram-container">
+                                    <h2>Performance History for: {{ operatorName || 'Loading...' }}</h2>
+                                    
+                                    <div v-if="chartData.datasets.length" class="chart-wrapper">
+                                    <Bar :data="chartData" :options="chartOptions" />
+                                    </div>
+                                    <p v-else-if="!loading">No performance data found for this operator.</p>
+                                    <p v-else>Loading performance data...</p>
                                 </div>
                             </div>
                         </div>
@@ -221,49 +261,121 @@
     </html>
    </Template>
 
-
-    <!-- <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> -->
-    
 <script setup>
-            import { ref } from 'vue'
-            // import { useAuthStore } from '../store/auth'
-            // import { useRouter } from 'vue-router'
+// import { onMounted } from 'vue'
+import axios from 'axios';
+import { useAuthStore } from '../store/auth'
+import { ref, onMounted } from 'vue';
+// import { useRoute } from 'vue-router';
 
-            // const auth = useAuthStore()
-            // const router = useRouter()
+// import Chart from 'chart.js/auto'; // If you're going to render the chart
 
-            // const logout = () => {
-            // auth.logout()
-            // router.push('/login')
-            // }
+// Using vue-chartjs wrappers makes this easier
+import { Bar } from 'vue-chartjs';
+import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 
-            // Initialize kpiData with default values
-            const kpiData = ref({
-            incidents: 0,
-            incidentsTrend: 0,
-            performance: 0,
-            errors: 0,
-            errorsTrend: 0,
-            })
+// Register Chart.js components globally for the wrapper
+ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
-            // Initialize other data similarly (e.g. userName, userAvatar, notifications, trafficSources)
-            // Example:
-            const userName = ref('User')
-            const userAvatar = ref('path_to_avatar.jpg')
-            const notifications = ref([])
-            const trafficSources = ref([])
 
-            // Your fetchData function should update kpiData.value when data is received
-            async function fetchData() {
-            // Fetch your data here, e.g. via axios
-            // Then update kpiData.value = { ...newData }
-            }
+const loading = ref(true);
+const operatorName = ref('');
+const chartData = ref({ labels: [], datasets: [] });
+const username = ref('User');
+const userAvatar = ref('path_to_avatar.jpg');
+const authStore = useAuthStore();
 
-            // pop pop form script
 
-           
+//For the calculations 
 
+
+
+// Your API endpoint should now point to the custom aggregation view
+const API_PRODUCTION_AGGREGATE_URL = 'http://127.0.0.1:8000/api/date_filter/'; 
+
+// Date inputs
+const startDate = ref(null);
+const endDate = ref(null);
+
+// Initialize kpiData structure to match the backend response keys
+const kpiData = ref({
+    // Initial data for the KPI cards
+    incidents: '0.00', // Mapped to total_optimisation
+    incidentsTrend: 0, // Mock trend value
+    performance: '0.00', // Mapped to total_performance
+    errors: '0.00', // Mock value, e.g., production_bk1 
+    errorsTrend: 0, // Mock trend value
+    // New fields to map to the other KPI cards
+    production_bk1: '0.00',
+    production_bk4: '0.00',
+    production_bk5: '0.00',
+    production_secheur: '0.00',
+});
+
+// Mock data for the static components
+const notifications = ref([
+    { title: 'BK1 Flow Alert', content: 'Flow dropped below threshold.', time: '5 mins ago' },
+    // ...
+]);
+const trafficSources = ref([
+    // { name: 'BK1', percentage: 30, class: 'primary' },
+    // { name: 'BK4', percentage: 30, class: 'success' },
+    // { name: 'BK5', percentage: 20, class: 'info' },
+    // { name: 'Secheur', percentage: 20, class: 'warning' },
+]);
+
+const fetchData = async () => {
+  const params = {};
+  if (startDate.value) params.start_date = startDate.value;
+  if (endDate.value) params.end_date = endDate.value;
+
+  const token = authStore.token || localStorage.getItem('token');
+
+  try {
+    const response = await axios.get(API_PRODUCTION_AGGREGATE_URL, {
+      params,
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    const data = response.data;
+
+    // 🧮 Map backend data to Vue cards
+    kpiData.value.arret_par_incident = data.arret_par_incident;
+    kpiData.value.PRI = data.PRI;
+    kpiData.value.total_production = data.total_production;
+
+    kpiData.value.Ecart_type = data.Ecart_type;
+    kpiData.value.HNA = data.HNA;
+    kpiData.value.total_optimisation = data.total_optimisation;
+
+    kpiData.value.Blaines = data.Blaines;
+    kpiData.value.temp = data.temp;
+    kpiData.value.total_qualites = data.total_qualites;
+
+  } catch (error) {
+    console.error('Error fetching KPIs:', error);
+  }
+};
+
+
+const handleLogout = () => {
+    authStore.logout();
+    // Use router if available: router.push('/login');
+    console.log('User logged out');
+}
+
+// ⚠️ IMPORTANT: Update the template bindings to use the new kpiData fields
+// For the five production KPI cards, you should use the new fields:
+// - TOTAL OPTIMISATION: {{ kpiData.incidents }}
+// - TOTAL PERFORMANCE: {{ kpiData.performance }}%
+// - TOTAL PRODUCTION BK1: {{ kpiData.production_bk1 }} (or keep {{ kpiData.errors }} if you prefer that naming)
+// - TOTAL PRODUCTION BK4: {{ kpiData.production_bk4 }}
+// - TOTAL PRODUCTION BK5: {{ kpiData.production_bk5 }}
+// - TOTAL PRODUCTION SECHEUR: {{ kpiData.production_secheur }}
+
+onMounted(() => {
+    fetchData();
+});
 </script>
 
 

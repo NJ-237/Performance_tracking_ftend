@@ -84,8 +84,13 @@ export const useAuthStore = defineStore('auth', {
             employee_id: userData.employee_id,
             phone_number:userData.phone_number,
             gender: userData.gender,
-          }
-        );
+          },
+
+           {
+                // IMPORTANT: This line overrides the global auth header for this request.
+                headers: { Authorization: null }
+            }
+  );
          // If we reach this point, both API calls were successful.
             console.log('Profile creation successful:', response_profile.data);
             return true; // Signal a full success
@@ -233,10 +238,11 @@ export const useAuthStore = defineStore('auth', {
 
     // LOGOUT ACTION
     logout() {
-    this.user = null;
+          this.user = null;
           this.token = null;
           this.error = null;
           localStorage.removeItem('token');
+          localStorage.removeItem('user');
           // localStorage.removeItem('lastShiftId'); // Clear the shift ID on logout
           delete axios.defaults.headers.common['Authorization'];
     },
@@ -349,7 +355,10 @@ async registerDryer(dryerData) {
 
   
           dryerData['shift']=parseInt(localStorage.getItem('lastShiftId'))
+          dryerData['ensilage_silo']=dryerData['ensilage_silo'].toString()
+          dryerData['situation_entree_quart'] = dryerData['situation_entree_quart'][0]
           alert(dryerData['shift'], typeof dryerData['shift'])
+          alert(dryerData['situation_entree_quart'])
            const response = await axios.post("http://127.0.0.1:8000/api/dryer/",  dryerData)
               if (response.status === 201) {
 
@@ -362,7 +371,157 @@ async registerDryer(dryerData) {
                 this.error = response.data || { detail: 'Dryer registration failed with an unexpected status.' };
                 return false;
               }
-}
+},
+
+
+async registerPort(portData) {
+    this.loading = true;
+    this.error = null;
+ 
+           const lastShiftId = localStorage.getItem('lastShiftId'); // Or any key you saved earlier
+             if (!lastShiftId) {
+            this.error = { detail: 'No shift ID found. Please register a shift first.' };
+            this.loading = false;
+            return false;
+        }
+
+  
+          portData['shift']=parseInt(localStorage.getItem('lastShiftId'))
+          portData['ensilage_silo']=portData['ensilage_silo'].toString()
+          portData['situation_entree_quart'] = portData['situation_entree_quart'][0]
+          alert(portData['shift'], typeof portData['shift'])
+          alert(portData['situation_entree_quart'])
+           const response = await axios.post("http://127.0.0.1:8000/api/port/",  portData)
+              if (response.status === 201) {
+
+                console.log('Port registration successful!', response.data);
+                
+                return true;
+              }
+              else {
+                // Handle non-201 status codes
+                this.error = response.data || { detail: 'port registration failed with an unexpected status.' };
+                return false;
+              }
+         },
+
+
+async registerBK1(broyeur1Data) {
+    this.loading = true;
+    this.error = null;
+ 
+           const lastShiftId = localStorage.getItem('lastShiftId'); // Or any key you saved earlier
+             if (!lastShiftId) {
+            this.error = { detail: 'No shift ID found. Please register a shift first.' };
+            this.loading = false;
+            return false;
+        }
+
+  
+          broyeur1Data['shift']=parseInt(localStorage.getItem('lastShiftId'))
+          broyeur1Data['ensilage_silo']=broyeur1Data['ensilage_silo'].toString()
+          broyeur1Data['extraction_silo'] = broyeur1Data['extraction_silo'].toString()
+          alert(broyeur1Data['shift'], typeof broyeur1Data['shift'])
+          // alert(broyeur1Data['extraction_silo'])
+           const response = await axios.post("http://127.0.0.1:8000/api/mill/",  broyeur1Data)
+              if (response.status === 201) {
+
+                console.log(' BK1 registration successful!', response.data);
+                
+                return true;
+              }
+              else {
+                // Handle non-201 status codes
+                this.error = response.data || { detail: 'BK1 registration failed with an unexpected status.' };
+                return false;
+              }
+         },
+
+async registerBK4(broyeur4Data) {
+    this.loading = true;
+    this.error = null;
+ 
+           const lastShiftId = localStorage.getItem('lastShiftId'); // Or any key you saved earlier
+             if (!lastShiftId) {
+            this.error = { detail: 'No shift ID found. Please register a shift first.' };
+            this.loading = false;
+            return false;
+        }
+
+  
+          broyeur4Data['shift']=parseInt(localStorage.getItem('lastShiftId'))
+          broyeur4Data['ensilage_silo']=broyeur4Data['ensilage_silo'].toString()
+          broyeur4Data['extraction_silo'] = broyeur4Data['extraction_silo'].toString()
+          alert(broyeur4Data['shift'], typeof broyeur4Data['shift'])
+          // alert(broyeur1Data['extraction_silo'])
+           const response = await axios.post("http://127.0.0.1:8000/api/mill/",  broyeur4Data)
+              if (response.status === 201) {
+
+                console.log(' BK4 registration successful!', response.data);
+                
+                return true;
+              }
+              else {
+                // Handle non-201 status codes
+                this.error = response.data || { detail: 'BK4 registration failed with an unexpected status.' };
+                return false;
+              }
+         },
+
+
+
+         
+async registerBK5(broyeur5Data) {
+    this.loading = true;
+    this.error = null;
+ 
+           const lastShiftId = localStorage.getItem('lastShiftId'); // Or any key you saved earlier
+             if (!lastShiftId) {
+            this.error = { detail: 'No shift ID found. Please register a shift first.' };
+            this.loading = false;
+            return false;
+        }
+
+  
+          broyeur5Data['shift']=parseInt(localStorage.getItem('lastShiftId'))
+          broyeur5Data['ensilage_silo']=broyeur5Data['ensilage_silo'].toString()
+          broyeur5Data['extraction_silo'] = broyeur5Data['extraction_silo'].toString()
+          alert(broyeur5Data['shift'], typeof broyeur5Data['shift'])
+          // alert(broyeur1Data['extraction_silo'])
+           const response = await axios.post("http://127.0.0.1:8000/api/mill/",  broyeur5Data)
+              if (response.status === 201) {
+
+                console.log(' BK5 registration successful!', response.data);
+                
+                return true;
+              }
+              else {
+                // Handle non-201 status codes
+                this.error = response.data || { detail: 'BK5 registration failed with an unexpected status.' };
+                return false;
+              }
+         },
+
+async registerFeedback(newFeedback) {
+    this.loading = true;
+    this.error = null;
+ 
+      
+          alert(newFeedback['submittedBy'])
+           const response = await axios.post("http://127.0.0.1:8000/api/feedback/",  newFeedback)
+              if (response.status === 201) {
+
+                console.log('Feedback registration successful!', response.data);
+                
+                return true;
+              }
+              else {
+                // Handle non-201 status codes
+                this.error = response.data || { detail: ' registration failed with an unexpected status.' };
+                return false;
+              }
+         },
+
 
 
 }

@@ -48,7 +48,7 @@
                 
             </li>
             <li>
-                <button @click="handleLogout" class="logout-btn">
+                <button style="color: violet; background: #1a2035;"  @click="handleLogout" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>LogOut</span>
                 </button>
@@ -79,9 +79,11 @@
                 </div>
             </div>
             <div class="col-md-6 d-flex justify-content-end">
-                <button class="btn print-btn">
-                    <i class="fas fa-print me-2"></i> Print Report
-                </button>
+                <form action="" method="post" @submitfile="handlefile()" enctype="multipart/form-data">
+                    <label for="myFile">Choose a file to upload:</label>
+                    <input type="file" id="myFile" name="uploadedFile">
+                    <button type="submit">Upload</button>
+                </form>
             </div>
         </div>
 
@@ -302,9 +304,9 @@
                                     
                         <div class="report-body">
                             <h3 class="section-title"><i class="fas fa-user me-2"></i>Shift Report</h3>
-                            <button class="btn btn-add" @click="addRow('cro')">
+                            <!-- <button class="btn btn-add" @click="addRow('cro')">
                                 <i class="fas fa-plus me-1"></i> Add New CRO Row
-                            </button>
+                            </button> -->
                               <div class="form-group">
                                 <label for="shiftDate">Date</label>
                                 <input type="date" id="shiftDate" class="form-input" v-model="shiftFormData.date"  />
@@ -456,52 +458,59 @@
                                                     <th>GYPSE</th>
                                                     <th>Fine</th>
                                                     <th>Compteur Horaires</th>
-                                                    <th>Ciment produit</th>
-                                                    <th>Commentaires</th>
+                                                    <!-- <th>Ciment produit</th> -->
+                                                    <!-- <th>Commentaires</th> -->
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td><span class="date-badge">Compteur Debut</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.clinker_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.pouzzolane_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.gypse_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.fine_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.compteur_horaire_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.ciment_produit"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.commentaires"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.clinker_debut"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.pouzzolane_debut"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.gypse_debut"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.fine_debut"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.compteur_horaire_debut"></td>
+                                                   
                                                 </tr>
                                                 <tr>
                                                     <td><span class="date-badge">Compteur Fin</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.clinker_fin"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.pouzzolane_fin"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.gypse_fin"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.fine_fin"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.compteur_horaire_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.clinker_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.pouzzolane_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.gypse_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.fine_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.compteur_horaire_fin"></td>
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
                                                 <tr>
                                                     <td><span class="date-badge">Difference</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.clinker_Difference"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.pouzzolane_Difference"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.gypse_Difference"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.fine_Difference"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.compteur_horaire_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.clinker_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.pouzzolane_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.gypse_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.fine_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur1Data.compteur_horaire_Difference"></td>
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
-                                                <tr>
-                                                    <td><span class="date-badge">Production</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.clinker_Production"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.pouzzolane_Production"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.gypse_Production"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.fine_Production"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur1Data.compteur_horaire_Production"></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                            </tbody>
+                                                </tbody>
+                                                <thead>
+                                                    <tr>
+                                                        <td><span class="date-badge">Production</span></td>
+                                                        <td><span class="date-badge">SO3</span></td>
+                                                        <td><span class="date-badge">Blaines</span></td>    
+                                                        <td><span class="date-badge">no_godets_receptions</span></td>    
+                                                        <td><span class="date-badge">Commentaires</span></td>    
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><input type="number" class="form-control" v-model="broyeur1Data.production"></td>
+                                                        <td><input type="number" class="form-control" v-model="broyeur1Data.SO3"></td>
+                                                        <td><input type="number" class="form-control" v-model="broyeur1Data.Blaines"></td>
+                                                        <td><input type="number" class="form-control" v-model="broyeur1Data.no_godets_receptions"></td>
+                                                        <td><input type="text" class="form-control" v-model="broyeur1Data.commentaires"></td>
+                                                    </tr>
+                                                </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -518,31 +527,31 @@
                                             <div class="form-section">
                                                 <h4 class="section-subtitle">Extraction Silo</h4>
                                                 <div class="checkbox-group">
-                                                    <label><input type="checkbox" v-model="broyeur1Data.extraction_silo1" > Silo kk 1</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.extraction_silo2" > Silo kk 2</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.extraction_silo3" > Silo kk 3</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.extraction_silo4" > Silo kk 4</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.extraction_silo5" > Quai 029</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.extraction_silo6" > Hall</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.extraction_silo7" > Compteur Marche a vide</label>
+                                                    <label><input type="checkbox" value="silo1" v-model="broyeur1Data.extraction_silo" > Silo kk 1</label>
+                                                    <label><input type="checkbox" value="silo2" v-model="broyeur1Data.extraction_silo" > Silo kk 2</label>
+                                                    <label><input type="checkbox" value="silo3" v-model="broyeur1Data.extraction_silo" > Silo kk 3</label>
+                                                    <label><input type="checkbox" value="silo4" v-model="broyeur1Data.extraction_silo" > Silo kk 4</label>
+                                                    <label><input type="checkbox" value="Quai_029" v-model="broyeur1Data.extraction_silo" > Quai 029</label>
+                                                    <label><input type="checkbox" value="Hall" v-model="broyeur1Data.extraction_silo" > Hall</label>
+                                                    <label><input type="checkbox" value="Marche_a_vide" v-model="broyeur1Data.extraction_silo" > Compteur Marche a vide</label>
                                                 </div>
                                             </div>
                                             
                                             <div class="form-section">
                                                 <h4 class="section-subtitle">Ensilage Silo</h4>
                                                 <div class="checkbox-group">
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo1" > Silo kk 1</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo2" > Silo kk 2</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo3" > Silo kk 3</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo4" > Silo kk 4</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo5" > Silo kk 5</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo6" > Silo kk 6</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo7" > Silo kk 7</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo8" > Silo kk 8</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo9" > Silo kk 9</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo10" > Silo kk 10</label>
-                                                    <label><input type="checkbox" v-model="broyeur1Data.ensilage_silo11" > Silo kk 11</label>
-                                                </div>
+                                                    <label><input type="checkbox" value="silo1" v-model = "broyeur1Data.ensilage_silo"> Silo kk 1</label>
+                                                    <label><input type="checkbox" value="silo2" v-model = "broyeur1Data.ensilage_silo"> Silo kk 2</label>
+                                                    <label><input type="checkbox" value="silo3" v-model = "broyeur1Data.ensilage_silo"> Silo kk 3</label>
+                                                    <label><input type="checkbox" value="silo4" v-model = "broyeur1Data.ensilage_silo"> Silo kk 4</label>
+                                                    <label><input type="checkbox" value="silo5" v-model = "broyeur1Data.ensilage_silo"> Silo kk 5</label>
+                                                    <label><input type="checkbox" value="silo6" v-model = "broyeur1Data.ensilage_silo"> Silo kk 6</label>
+                                                    <label><input type="checkbox" value="silo7" v-model = "broyeur1Data.ensilage_silo"> Silo kk 7</label>
+                                                    <label><input type="checkbox" value="silo8" v-model = "broyeur1Data.ensilage_silo"> Silo kk 8</label>
+                                                    <label><input type="checkbox" value="silo9" v-model = "broyeur1Data.ensilage_silo"> Silo kk 9</label>
+                                                    <label><input type="checkbox" value="silo10" v-model = "broyeur1Data.ensilage_silo"> Silo kk 10</label>
+                                                    <label><input type="checkbox" value="silo11" v-model = "broyeur1Data.ensilage_silo"> Silo kk 11</label> 
+                                                 </div>
                                             </div>
                                         </div>
                                     </div>
@@ -608,52 +617,61 @@
                                                     <th>GYPSE</th>
                                                     <th>Fine</th>
                                                     <th>Compteur Horaires</th>
-                                                    <th>Ciment produit</th>
-                                                    <th>Commentaires</th>
+                                                    <!-- <th>Ciment produit</th> -->
+                                                    <!-- <th>Commentaires</th> -->
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
                                                     <td><span class="date-badge">Compteur Debut</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.clinker_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.pouzzolane_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.gypse_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.fine_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.compteur_horaire_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.ciment_produit"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.commentaires"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.clinker_debut"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.pouzzolane_debut"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.gypse_debut"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.fine_debut"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.compteur_horaire_debut"></td>
+                                                    <!-- <td><input type="text" class="form-control" v-model="broyeur4Data.ciment_produit"></td> -->
                                                 </tr>
                                                 <tr>
                                                     <td><span class="date-badge">Compteur Fin</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.clinker_fin"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.pouzzolane_fin"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.gypse_fin"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.fine_fin"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.compteur_horaire_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.clinker_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.pouzzolane_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.gypse_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.fine_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.compteur_horaire_fin"></td>
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
                                                 <tr>
                                                     <td><span class="date-badge">Difference</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.clinker_Difference"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.pouzzolane_Difference"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.gypse_Difference"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.fine_Difference"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.compteur_horaire_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.clinker_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.pouzzolane_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.gypse_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.fine_Difference"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur4Data.compteur_horaire_Difference"></td>
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
-                                                <tr>
-                                                    <td><span class="date-badge">Production</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.clinker_Production"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.pouzzolane_Production"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.gypse_Production"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.fine_Production"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur4Data.compteur_horaire_Production"></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
+                                               
                                             </tbody>
+                                               
+                                               <thead>
+                                                    <tr>
+                                                        <td><span class="date-badge">Production</span></td>
+                                                        <td><span class="date-badge">SO3</span></td>
+                                                        <td><span class="date-badge">Blaines</span></td>    
+                                                        <td><span class="date-badge">no_godets_receptions</span></td>    
+                                                        <td><span class="date-badge">Commentaires</span></td>    
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><input type="number" class="form-control" v-model="broyeur4Data.production"></td>
+                                                        <td><input type="number" class="form-control" v-model="broyeur4Data.SO3"></td>
+                                                        <td><input type="number" class="form-control" v-model="broyeur4Data.Blaines"></td>
+                                                        <td><input type="number" class="form-control" v-model="broyeur4Data.no_godets_receptions"></td>
+                                                        <td><input type="text" class="form-control" v-model="broyeur4Data.commentaires"></td>
+                                                    </tr>
+                                                </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -670,30 +688,31 @@
                                             <div class="form-section">
                                                 <h4 class="section-subtitle">Extraction Silo</h4>
                                                 <div class="checkbox-group">
-                                                    <label><input type="checkbox" v-model="broyeur4Data.extraction_silo1" > Silo kk 1</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.extraction_silo2" > Silo kk 2</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.extraction_silo3" > Silo kk 3</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.extraction_silo4" > Silo kk 4</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.extraction_silo5" > Quai 029</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.extraction_silo6" > Hall</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.extraction_silo7" > Compteur Marche a vide</label>
+                                                    <label><input type="checkbox" value="silo1" v-model="broyeur4Data.extraction_silo" > Silo kk 1</label>
+                                                    <label><input type="checkbox" value="silo2" v-model="broyeur4Data.extraction_silo" > Silo kk 2</label>
+                                                    <label><input type="checkbox" value="silo3" v-model="broyeur4Data.extraction_silo" > Silo kk 3</label>
+                                                    <label><input type="checkbox" value="silo4" v-model="broyeur4Data.extraction_silo" > Silo kk 4</label>
+                                                    <label><input type="checkbox" value="Quai_029" v-model="broyeur4Data.extraction_silo" > Quai 029</label>
+                                                    <label><input type="checkbox" value="Hall" v-model="broyeur4Data.extraction_silo" > Hall</label>
+                                                    <label><input type="checkbox" value="Marche_a_vide" v-model="broyeur4Data.extraction_silo" > Compteur Marche a vide</label>
                                                 </div>
                                             </div>
-                                            
-                                                                                           <h4 class="section-subtitle">Ensilage Silo</h4>
+                                            <div class="form-section">
+                                                <h4 class="section-subtitle">Ensilage Silo</h4>
                                                 <div class="checkbox-group">
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo1" > Silo kk 1</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo2" > Silo kk 2</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo3" > Silo kk 3</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo4" > Silo kk 4</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo5" > Silo kk 5</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo6" > Silo kk 6</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo7" > Silo kk 7</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo8" > Silo kk 8</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo9" > Silo kk 9</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo10" > Silo kk 10</label>
-                                                    <label><input type="checkbox" v-model="broyeur4Data.ensilage_silo11" > Silo kk 11</label>
+                                                    <label><input type="checkbox" value="silo1" v-model="broyeur4Data.ensilage_silo" > Silo kk 1</label>
+                                                    <label><input type="checkbox" value="silo2" v-model="broyeur4Data.ensilage_silo" > Silo kk 2</label>
+                                                    <label><input type="checkbox" value="silo3" v-model="broyeur4Data.ensilage_silo" > Silo kk 3</label>
+                                                    <label><input type="checkbox" value="silo4" v-model="broyeur4Data.ensilage_silo" > Silo kk 4</label>
+                                                    <label><input type="checkbox" value="silo5" v-model="broyeur4Data.ensilage_silo" > Silo kk 5</label>
+                                                    <label><input type="checkbox" value="silo6" v-model="broyeur4Data.ensilage_silo" > Silo kk 6</label>
+                                                    <label><input type="checkbox" value="silo7" v-model="broyeur4Data.ensilage_silo" > Silo kk 7</label>
+                                                    <label><input type="checkbox" value="silo8" v-model="broyeur4Data.ensilage_silo" > Silo kk 8</label>
+                                                    <label><input type="checkbox" value="silo9" v-model="broyeur4Data.ensilage_silo" > Silo kk 9</label>
+                                                    <label><input type="checkbox" value="silo10" v-model="broyeur4Data.ensilage_silo" > Silo kk 10</label>
+                                                    <label><input type="checkbox" value="silo11" v-model="broyeur4Data.ensilage_silo" > Silo kk 11</label>
                                                 </div>
+                                            </div>
                                             </div>
                                         </div>
                                     </div>
@@ -758,53 +777,62 @@
                                                     <th>GYPSE</th>
                                                     <th>Fine</th>
                                                     <th>Compteur Horaires</th>
-                                                    <th>Ciment produit</th>
-                                                    <th>Commentaires</th>
+                                                    
                                                 </tr>
                                             </thead>
 
                                             <tbody>
                                                 <tr>
                                                     <td><span class="date-badge">Compteur Debut</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.clinker_debut" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.pouzzolane_debut" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.gypse_debut" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.fine_debut" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.compteur_horaire_debut" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.ciment_produit"></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.commentaires"></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.clinker_debut" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.pouzzolane_debut" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.gypse_debut" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.fine_debut" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.compteur_horaire_debut" ></td>
+                                                   
+                                                   
                                                 </tr>
                                                 <tr>
                                                     <td><span class="date-badge">Compteur Fin</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.clinker_fin" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.pouzzolane_fin" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.gypse_fin" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.fine_fin" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.compteur_horaire_fin" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.clinker_fin" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.pouzzolane_fin" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.gypse_fin" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.fine_fin" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.compteur_horaire_fin" ></td>
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
                                                 <tr>
                                                     <td><span class="date-badge">Difference</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.clinker_Difference" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.pouzzolane_Difference" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.gypse_Difference" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.fine_Difference" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.compteur_horaire_Difference" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.clinker_Difference" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.pouzzolane_Difference" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.gypse_Difference" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.fine_Difference" ></td>
+                                                    <td><input type="number" class="form-control" v-model="broyeur5Data.compteur_horaire_Difference" ></td>
                                                     <td></td>
                                                     <td></td>
                                                 </tr>
-                                                <tr>
-                                                    <td><span class="date-badge">Production</span></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.clinker_Production" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.pouzzolane_Production" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.gypse_Production" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.fine_Production" ></td>
-                                                    <td><input type="text" class="form-control" v-model="broyeur5Data.compteur_horaire_Production" ></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
+                                         
                                             </tbody>
+                                                <thead>
+                                                    <tr>
+                                                        <td><span class="date-badge">Production</span></td>
+                                                        <td><span class="date-badge">SO3</span></td>
+                                                        <td><span class="date-badge">Blaines</span></td>    
+                                                        <td><span class="date-badge">no_godets_receptions</span></td>    
+                                                        <td><span class="date-badge">Commentaires</span></td>    
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td><input type="number" class="form-control" v-model="broyeur5Data.production"></td>
+                                                        <td><input type="number" class="form-control" v-model="broyeur5Data.SO3"></td>
+                                                        <td><input type="number" class="form-control" v-model="broyeur5Data.Blaines"></td>
+                                                        <td><input type="number" class="form-control" v-model="broyeur5Data.no_godets_receptions"></td>
+                                                        <td><input type="text" class="form-control" v-model="broyeur5Data.commentaires"></td>
+                                                    </tr>
+                                                </tbody>
+
                                         </table>
                                     </div>
                                 </div>
@@ -821,30 +849,30 @@
                                             <div class="form-section">
                                                 <h4 class="section-subtitle">Extraction Silo</h4>
                                                 <div class="checkbox-group">
-                                                    <label><input type="checkbox" v-model="broyeur5Data.extraction_silo1" > Silo kk 1</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.extraction_silo2" > Silo kk 2</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.extraction_silo3" > Silo kk 3</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.extraction_silo4" > Silo kk 4</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.extraction_silo5" > Quai 029</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.extraction_silo6" > Hall</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.extraction_silo7" > Compteur Marche a vide</label>
+                                                    <label><input type="checkbox" value="silo1" v-model="broyeur5Data.extraction_silo" > Silo kk 1</label>
+                                                    <label><input type="checkbox" value="silo2" v-model="broyeur5Data.extraction_silo" > Silo kk 2</label>
+                                                    <label><input type="checkbox" value="silo3" v-model="broyeur5Data.extraction_silo" > Silo kk 3</label>
+                                                    <label><input type="checkbox" value="silo4" v-model="broyeur5Data.extraction_silo" > Silo kk 4</label>
+                                                    <label><input type="checkbox" value="Quai_029" v-model="broyeur5Data.extraction_silo" > Quai 029</label>
+                                                    <label><input type="checkbox" value="Hall" v-model="broyeur5Data.extraction_silo" > Hall</label>
+                                                    <label><input type="checkbox" value="Marche_a_broyeur5" v-model="broyeur5Data.extraction_silo" > Compteur Marche a vide</label>
                                                 </div>
                                             </div>
                                             
                                             <div class="form-section">
                                                 <h4 class="section-subtitle">Ensilage Silo</h4>
                                                 <div class="checkbox-group">
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo1" > Silo kk 1</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo2" > Silo kk 2</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo3" > Silo kk 3</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo4" > Silo kk 4</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo5" > Silo kk 5</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo6" > Silo kk 6</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo7" > Silo kk 7</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo8" > Silo kk 8</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo9" > Silo kk 9</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo10" > Silo kk 10</label>
-                                                    <label><input type="checkbox" v-model="broyeur5Data.ensilage_silo11" > Silo kk 11</label>
+                                        <label><input type="checkbox" value="silo1" v-model = "portData.ensilage_silo"> Silo kk 1</label>
+                                                     <label><input type="checkbox" value="silo2" v-model = "broyeur5Data.ensilage_silo"> Silo kk 2</label>
+                                                    <label><input type="checkbox" value="silo3" v-model = "broyeur5Data.ensilage_silo"> Silo kk 3</label>
+                                                    <label><input type="checkbox" value="silo4" v-model = "broyeur5Data.ensilage_silo"> Silo kk 4</label>
+                                                    <label><input type="checkbox" value="silo5" v-model = "broyeur5Data.ensilage_silo"> Silo kk 5</label>
+                                                    <label><input type="checkbox" value="silo6" v-model = "broyeur5Data.ensilage_silo"> Silo kk 6</label>
+                                                    <label><input type="checkbox" value="silo7" v-model = "broyeur5Data.ensilage_silo"> Silo kk 7</label>
+                                                    <label><input type="checkbox" value="silo8" v-model = "broyeur5Data.ensilage_silo"> Silo kk 8</label>
+                                                    <label><input type="checkbox" value="silo9" v-model = "broyeur5Data.ensilage_silo"> Silo kk 9</label>
+                                                    <label><input type="checkbox" value="silo10" v-model = "broyeur5Data.ensilage_silo"> Silo kk 10</label>
+                                                    <label><input type="checkbox" value="silo11" v-model = "broyeur5Data.ensilage_silo"> Silo kk 11</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -1004,8 +1032,8 @@
                                             <div class="form-section">
                                                 <h4 class="section-subtitle">Situation A L'entree Du Quart</h4>
                                                 <div class="checkbox-group">
-                                                    <label><input type="checkbox" value="En_Marche" v-model = "dryerData.situation_entree_quart"> En Marche</label>
-                                                    <label><input type="checkbox" value="En_arret" v-model = "dryerData.situation_entree_quart"> En Arret</label>
+                                                    <label><input type="checkbox" value="En Marche" v-model = "dryerData.situation_entree_quart"> En Marche</label>
+                                                    <label><input type="checkbox" value="En Arret" v-model = "dryerData.situation_entree_quart"> En Arret</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -1070,25 +1098,25 @@
                                             <div class="form-section">
                                                 <h4 class="section-subtitle">Ensilage Silo</h4>
                                                 <div class="checkbox-group">
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo1"> Silo kk 1</label>
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo2"> Silo kk 2</label>
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo3"> Silo kk 3</label>
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo4"> Silo kk 4</label>
-                                                     <label><input type="checkbox" v-model="portData.ensilage_silo5" > Silo kk 5</label>
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo6" > Silo kk 6</label>
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo7" > Silo kk 7</label>
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo8" > Silo kk 8</label>
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo9" > Silo kk 9</label>
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo10" > Silo kk 10</label>
-                                                    <label><input type="checkbox" v-model="portData.ensilage_silo11" > Silo kk 11</label>
+                                                     <label><input type="checkbox" value="silo1" v-model = "portData.ensilage_silo"> Silo kk 1</label>
+                                                     <label><input type="checkbox" value="silo2" v-model = "portData.ensilage_silo"> Silo kk 2</label>
+                                                    <label><input type="checkbox" value="silo3" v-model = "portData.ensilage_silo"> Silo kk 3</label>
+                                                    <label><input type="checkbox" value="silo4" v-model = "portData.ensilage_silo"> Silo kk 4</label>
+                                                    <label><input type="checkbox" value="silo5" v-model = "portData.ensilage_silo"> Silo kk 5</label>
+                                                    <label><input type="checkbox" value="silo6" v-model = "portData.ensilage_silo"> Silo kk 6</label>
+                                                    <label><input type="checkbox" value="silo7" v-model = "portData.ensilage_silo"> Silo kk 7</label>
+                                                    <label><input type="checkbox" value="silo8" v-model = "portData.ensilage_silo"> Silo kk 8</label>
+                                                    <label><input type="checkbox" value="silo9" v-model = "portData.ensilage_silo"> Silo kk 9</label>
+                                                    <label><input type="checkbox" value="silo10" v-model = "portData.ensilage_silo"> Silo kk 10</label>
+                                                    <label><input type="checkbox" value="silo11" v-model = "portData.ensilage_silo"> Silo kk 11</label>
                                                 </div>
                                             </div>
                                             
                                             <div class="form-section">
                                                 <h4 class="section-subtitle">Situation A L'entree Du Quart</h4>
                                                 <div class="checkbox-group">
-                                                    <label><input type="radio" v-model="portData.situation_entree_quart" value="En Marche"> En Marche</label>
-                                                    <label><input type="radio" v-model="portData.situation_entree_quart" value="En Arret"> En Arret</label>
+                                                    <label><input type="checkbox"  v-model="portData.situation_entree_quart" value="En Marche"> En Marche</label>
+                                                    <label><input type="checkbox" v-model="portData.situation_entree_quart" value="En Arret"> En Arret</label>
                                                 </div>
                                             </div>
                                         </div>
@@ -1121,9 +1149,9 @@
                                                     <td><input type="datetime-local" class="form-control" v-model="portData.debut"></td>
                                                     <td><input type="datetime-local" class="form-control" v-model="portData.fin"></td>
                                                     <td><input type="text" class="form-control" v-model="portData.duree"></td>
-                                                    <td><input type="text" class="form-control" v-model="portData.compteur_debut"></td>
-                                                    <td><input type="text" class="form-control" v-model="portData.compteur_fin"></td>
-                                                    <td><input type="text" class="form-control" v-model="portData.dechargement"></td>
+                                                    <td><input type="number" class="form-control" v-model="portData.compteur_debut"></td>
+                                                    <td><input type="number" class="form-control" v-model="portData.compteur_fin"></td>
+                                                    <td><input type="number" class="form-control" v-model="portData.dechargement"></td>
                                                 </tr>
                                             </tbody>
                                         </table>
@@ -1423,7 +1451,6 @@ const handleLogout = async () => {
 
 
 const handleshift = async () => {
-
   loading.value = true;
   errorMessage.value = null;
 
@@ -1446,12 +1473,15 @@ const handleshift = async () => {
   } finally {
     loading.value = false;
   }
-};
+};     
 
-
-        
-
-const broyeur1Data = ref({clinker_debut :'',clinker_fin :'',clinker_Difference :'',pouzzolane_debut :'',pouzzolane_fin :'',
+const broyeur1Data = ref({
+shift: null,
+clinker_debut :'',
+clinker_fin :'',
+clinker_Difference :'',
+pouzzolane_debut :'',
+pouzzolane_fin :'',
 pouzzolane_Difference :'',
 gypse_debut :'',
 gypse_fin :'',
@@ -1462,37 +1492,18 @@ fine_Difference :'',
 compteur_horaire_debut :'',
 compteur_horaire_fin :'',
 compteur_horaire_Difference :'',
-ciment_produit :'',
-Tonnage :'',
+production:'',
 commentaires :'',
-//   extraction_silo: [], // Change to array for checkboxes
-//   ensilage_silo: [] 
- extraction_silo1:'', 
- extraction_silo2:'',
- extraction_silo3:'',
- extraction_silo4:'',
- extraction_silo5:'',
- extraction_silo6:'',
- extraction_silo7:'',
-
-
-
-ensilage_silo1 : '',
-ensilage_silo2:'',
-ensilage_silo3:'',
-ensilage_silo4:'',
-ensilage_silo5:'',
-ensilage_silo6:'', 
-ensilage_silo7:'', 
-ensilage_silo8:'', 
-ensilage_silo9:'', 
-ensilage_silo10:'', 
-ensilage_silo11:'', 
+SO3: '',
+Blaines: '',
+extraction_silo:([]),
+ensilage_silo :([]),
 no_godets_receptions :'',
  
 })  
+
 const broyeur4Data = ref({
-  
+shift: null,
 clinker_debut :'',
 clinker_fin :'',
 clinker_Difference :'',
@@ -1508,37 +1519,17 @@ fine_Difference :'',
 compteur_horaire_debut :'',
 compteur_horaire_fin :'',
 compteur_horaire_Difference :'',
-ciment_produit :'',
-Tonnage :'',
+production:'',
 commentaires :'',
-//   extraction_silo: [], // Change to array for checkboxes
-//   ensilage_silo: [] 
- extraction_silo1:'', 
- extraction_silo2:'',
- extraction_silo3:'',
- extraction_silo4:'',
- extraction_silo5:'',
- extraction_silo6:'',
- extraction_silo7:'',
-
-
-
-ensilage_silo1 : '',
-ensilage_silo2:'',
-ensilage_silo3:'',
-ensilage_silo4:'',
-ensilage_silo5:'',
-ensilage_silo6:'', 
-ensilage_silo7:'', 
-ensilage_silo8:'', 
-ensilage_silo9:'', 
-ensilage_silo10:'', 
-ensilage_silo11:'', 
+SO3: '',
+Blaines: '',
+extraction_silo:([]),
+ensilage_silo :([]),
 no_godets_receptions :'',
- 
 })  
+
 const broyeur5Data = ref({
-  
+shift: null,
 clinker_debut :'',
 clinker_fin :'',
 clinker_Difference :'',
@@ -1554,32 +1545,12 @@ fine_Difference :'',
 compteur_horaire_debut :'',
 compteur_horaire_fin :'',
 compteur_horaire_Difference :'',
-ciment_produit :'',
-Tonnage :'',
+production:'',
 commentaires :'',
-//   extraction_silo: [], // Change to array for checkboxes
-//   ensilage_silo: [] 
- extraction_silo1:'', 
- extraction_silo2:'',
- extraction_silo3:'',
- extraction_silo4:'',
- extraction_silo5:'',
- extraction_silo6:'',
- extraction_silo7:'',
-
-
-
-ensilage_silo1 : '',
-ensilage_silo2:'',
-ensilage_silo3:'',
-ensilage_silo4:'',
-ensilage_silo5:'',
-ensilage_silo6:'', 
-ensilage_silo7:'', 
-ensilage_silo8:'', 
-ensilage_silo9:'', 
-ensilage_silo10:'', 
-ensilage_silo11:'', 
+SO3: '',
+Blaines: '',
+extraction_silo:([]),
+ensilage_silo :([]),
 no_godets_receptions :'',
  
 })  
@@ -1623,15 +1594,15 @@ situation_entree_quart:([]),
 
 // Inputs of port 
 const portData = ref ({
-  commentaires:'',
-   debut :'',
-   fin :'',
- duree: '',
+commentaires:'',
+debut :'',
+fin :'',
+duree: '',
 compteur_debut: '',
 compteur_fin: '',
 dechargement :'',
-ensilage_silo: {},
-situation_entree_quart:'',
+ensilage_silo: ([]),
+situation_entree_quart:([]),
 
 })
 
@@ -1672,7 +1643,7 @@ const expeditionData = ref({
 
 
 
-const handleExp = async () => {
+const handlePort = async () => {
   loading.value = true;
   errorMessage.value = null;
 
@@ -1687,21 +1658,21 @@ const handleExp = async () => {
 
     try {
             // Set the shift ID on the expedition data
-        expeditionData.value.shift = authStore.lastShiftId;
-        console.log("Submitting expedition data:", expeditionData.value);
-       const success = await authStore.registerExpedition(expeditionData.value);
+        portData.value.shift = authStore.lastShiftId;
+        console.log("Submitting port data:",portData.value);
+       const success = await authStore.registerPort(portData.value);
         if (success) {
-              alert('Expedition registered successfully!');
+              alert('Port registered successfully!');
 
                //  successMessage.value = 'Expedition registered successfully!';
            // Close the modal on success
-      if (modalInstance) modalInstance.hide();
+      if (modalInstance5) modalInstance5.hide();
         } else {
             errorMessage.value = authStore.error?.detail || 'An unknown error occurred.';
         }
     } catch (err) {
-        console.error('Expedition submission failed:', err);
-        errorMessage.value = 'An error occurred during expedition submission. Please try again.';
+        console.error('Port submission failed:', err);
+        errorMessage.value = 'An error occurred during port submission. Please try again.';
     } finally {
         loading.value = false;
     }
@@ -1743,6 +1714,147 @@ const handleDryer = async () => {
     }
 };
 
+const handleBK1 = async () => {
+  loading.value = true;
+  errorMessage.value = null;
+
+
+   // Check if a shift ID exists
+    if (!authStore.lastShiftId) {
+        errorMessage.value = 'Please submit a BK1 report first.';
+        loading.value = false;
+        return;
+    }
+
+    try {
+            // Set the shift ID on the expedition data
+        broyeur1Data.value.shift = authStore.lastShiftId;
+        console.log("Submitting BK1 data:", broyeur1Data.value);
+       const success = await authStore.registerBK1(broyeur1Data.value);
+        if (success) {
+              alert('BK1 registered successfully!');
+
+               //  successMessage.value = 'Expedition registered successfully!';
+           // Close the modal on success
+            if (modalInstance1) modalInstance1.hide();
+        } else {
+                    errorMessage.value = authStore.error?.detail || 'An unknown error occurred.';
+                } 
+    } 
+    catch (err) {
+        console.error('BK1 submission failed:', err);
+        errorMessage.value = 'An error occurred during BK1 submission. Please try again.';
+    } finally {
+        loading.value = false;
+    }
+};
+
+
+
+const handleBK4 = async () => {
+  loading.value = true;
+  errorMessage.value = null;
+
+
+   // Check if a shift ID exists
+    if (!authStore.lastShiftId) {
+        errorMessage.value = 'Please submit a BK1 report first.';
+        loading.value = false;
+        return;
+    }
+
+    try {
+            // Set the shift ID on the expedition data
+        broyeur4Data.value.shift = authStore.lastShiftId;
+        console.log("Submitting BK1 data:", broyeur4Data.value);
+       const success = await authStore.registerBK4(broyeur4Data.value);
+        if (success) {
+              alert('BK4 registered successfully!');
+
+               //  successMessage.value = 'Expedition registered successfully!';
+           // Close the modal on success
+            if (modalInstance2) modalInstance2.hide();
+        } else {
+                    errorMessage.value = authStore.error?.detail || 'An unknown error occurred.';
+                } 
+    } 
+    catch (err) {
+        console.error('BK4 submission failed:', err);
+        errorMessage.value = 'An error occurred during BK4 submission. Please try again.';
+    } finally {
+        loading.value = false;
+    }
+};
+
+const handleBK5 = async () => {
+  loading.value = true;
+  errorMessage.value = null;
+
+
+   // Check if a shift ID exists
+    if (!authStore.lastShiftId) {
+        errorMessage.value = 'Please submit a BK5 report first.';
+        loading.value = false;
+        return;
+    }
+
+    try {
+            // Set the shift ID on the expedition data
+        broyeur5Data.value.shift = authStore.lastShiftId;
+        console.log("Submitting BK5 data:", broyeur5Data.value);
+       const success = await authStore.registerBK5(broyeur5Data.value);
+        if (success) {
+              alert('BK5 registered successfully!');
+
+               //  successMessage.value = 'Expedition registered successfully!';
+           // Close the modal on success
+            if (modalInstance3) modalInstance3.hide();
+        } else {
+                    errorMessage.value = authStore.error?.detail || 'An unknown error occurred.';
+                } 
+    } 
+    catch (err) {
+        console.error('BK5 submission failed:', err);
+        errorMessage.value = 'An error occurred during BK5 submission. Please try again.';
+    } finally {
+        loading.value = false;
+    }
+};
+
+const handleExp = async () => {
+  loading.value = true;
+  errorMessage.value = null;
+
+ 
+
+   // Check if a shift ID exists
+    if (!authStore.lastShiftId) {
+        errorMessage.value = 'Please submit a shift report first.';
+        loading.value = false;
+        return;
+    }
+
+    try {
+            // Set the shift ID on the expedition data
+        expeditionData.value.shift = authStore.lastShiftId;
+        console.log("Submitting expedition data:", expeditionData.value);
+       const success = await authStore.registerExpedition(expeditionData.value);
+        if (success) {
+              alert('Expedition registered successfully!');
+
+               //  successMessage.value = 'Expedition registered successfully!';
+           // Close the modal on success
+      if (modalInstance) modalInstance.hide();
+        } else {
+            errorMessage.value = authStore.error?.detail || 'An unknown error occurred.';
+        }
+    } catch (err) {
+        console.error('Expedition submission failed:', err);
+        errorMessage.value = 'An error occurred during expedition submission. Please try again.';
+    } finally {
+        loading.value = false;
+    }
+};
 
 
 // Create refs for modal elements
@@ -1774,16 +1886,7 @@ onMounted(() => {
   modalInstance6 = new Modal(shiftModal6.value);
 });
 
-// Load data when the component is mounted or when shiftNumber changes.
-// onMounted(() => {
-//     // Correct way to call the function from your store.
-//     authStore.loadbroyeur1Data(props.shiftNumber, 'BROYEUR-1');
-//     authStore.loadbroyeur4Data(props.shiftNumber, 'BROYEUR-4');
-//     authStore.loadbroyeur5Data(props.shiftNumber, 'BROYEUR-5');
-//     authStore.loaddryerData(props.shiftNumber, 'SECHEUR');
-//     authStore.loadportData(props.shiftNumber, 'PORT');
-//     authStore.loadexpeditionData(props.shiftNumber, 'EXPEDITION');
-// });
+
 
 // Assuming 'shiftNumber' is the variable holding the current shift number
 const shiftNumber = ref([1, 2, 3]); // Example shift number

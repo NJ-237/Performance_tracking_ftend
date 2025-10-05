@@ -121,10 +121,10 @@
                                         </span>
                                         <select id="myOptions" class="form-select border-start-0" v-model="role" required>
                                             <option value="">--Select Position--</option>
-                                            <option value="cro">CRO</option>
-                                            <option value="patroller">Patroller</option>
-                                            <option value="dispatch">Dispatch</option>
-                                            <option value="chef">CDQ</option>
+                                            <option value="CRO">CRO</option>
+                                            <option value="Patroller">Patroller</option>
+                                            <option value="Dispatch">Dispatch</option>
+                                            <option value="CDQ">CDQ</option>
                                         </select>
                                     </div>
                                 </div>

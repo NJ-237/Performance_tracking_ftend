@@ -1,35 +1,40 @@
 <template>
   <div class="app-container">
     <!-- Sidebar -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">
+   <nav class="sidebar" style=" background: #1a2035; color: black;">
+        <div class="sidebar-header">
         <div class="logo">
-          <img src="../../assets/img/10_48_34_cimencam_logo.png" alt="Logo">
+          <img src="C:\projects\cimencam_app\frontend\Performance_tracking_ftend\cimencam_ft\src\assets\img\10_48_34_cimencam_logo.png" alt="Logo">
           <span>Dashboard</span>
         </div>
       </div>
       <ul class="nav-links">
         <li>
-          <router-link class="nav-link" to="/dashboard">
+          <router-link class="nav-link" to="/DashboardAdmin">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
           </router-link>
         </li>
          <li>
-          <router-link class="nav-link" to="/performance" active-class="active">
-            <i class="fas fa-chart-line"></i>
-            <span>Performance</span>
+          <router-link class="nav-link" to="/CRO" active-class="active">
+            <i class="fas fa-sliders-h"></i>
+            <span>CRO</span>
           </router-link>
         </li>
         <li>
-          <router-link class="nav-link" to="/report"> 
-            <i class="fas fa-newspaper"></i>
-            <span>Report</span>
+          <router-link class="nav-link" to="/Patroller"> 
+            <i class="fas fa-shield-alt"></i>
+            <span>Patroller</span>
           </router-link>
         </li>
         <li>
-          <router-link class="nav-link" to="/feedback" active-class="active">
+          <router-link class="nav-link" to="/CDQ" active-class="active">
+            <i class="fas fa-user-tie"></i>
+            <span>Chef de quart</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link class="nav-link" to="/feedback">
             <i class="fas fa-comment-alt"></i>
             <span>Feedback</span>
           </router-link>
@@ -41,15 +46,14 @@
           </router-link>
         </li>
         <li>
-          <router-link class="nav-link" to="/logout">
-            <i class="fas fa-sign-out-alt"></i>
-            <span>LogOut</span>
-          </router-link>
+            <button style="color: violet; background: #1a2035;"  @click="handleLogout" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>LogOut</span>
+            </button>
         </li>
       </ul>
-    </div>
-
-    <!-- Main Content -->
+    </nav>
+  <!-- Main Content -->
     <div class="main-content">
       <div class="feedback-container">
         <div class="header">
@@ -185,17 +189,16 @@
 import { ref, computed, onMounted } from 'vue';
 import { Modal } from 'bootstrap';
 import { format } from 'date-fns';
+import { useAuthStore } from '../../store/auth'
+import axios from 'axios'; // <-- Uncomment this
+// import { useRouter } from 'vue-router';
+
 
 // Modal reference
 const feedbackModal = ref(null);
 let modalInstance = null;
 
-// Initialize modal when component mounts
-onMounted(() => {
-  modalInstance = new Modal(feedbackModal.value);
-});
-
-// Operators data
+// Operators data (Keep as is)
 const operators = ref([
   { id: 1, name: 'CRO', description: 'Control Room Operator', icon: 'fas fa-desktop', class: 'cro' },
   { id: 2, name: 'Dispatcher', description: 'Dispatch Operator', icon: 'fas fa-truck', class: 'dispatch' },
@@ -203,49 +206,8 @@ const operators = ref([
   { id: 4, name: 'CDQ', description: 'Shift Manager', icon: 'fas fa-snowflake', class: 'cdq' }
 ]);
 
-// Feedback data
-const feedbacks = ref([
-  { 
-    date: new Date('2023-05-15'), 
-    operatorType: 'CRO', 
-    type: 'Performance', 
-    rating: 4, 
-    comments: 'Excellent response time during the night shift', 
-    submittedBy: 'John Smith' 
-  },
-  { 
-    date: new Date('2023-05-14'), 
-    operatorType: 'Dispatcher', 
-    type: 'Safety', 
-    rating: 5, 
-    comments: 'Very thorough safety checks before operations', 
-    submittedBy: 'Sarah Johnson' 
-  },
-  { 
-    date: new Date('2023-05-13'), 
-    operatorType: 'Patroller', 
-    type: 'Behavior', 
-    rating: 3, 
-    comments: 'Could improve communication with other team members', 
-    submittedBy: 'Mike Brown' 
-  },
-  { 
-    date: new Date('2023-05-12'), 
-    operatorType: 'CDQ', 
-    type: 'Performance', 
-    rating: 4, 
-    comments: 'Maintained optimal cooling parameters throughout shift', 
-    submittedBy: 'Lisa Wong' 
-  },
-  { 
-    date: new Date('2023-05-11'), 
-    operatorType: 'CRO', 
-    type: 'Other', 
-    rating: 2, 
-    comments: 'Need to document procedures more clearly', 
-    submittedBy: 'David Lee' 
-  },
-]);
+// Feedback data - This will now be populated from the backend
+const feedbacks = ref([]); // Initialize as an empty array
 
 // New feedback form
 const newFeedback = ref({
@@ -254,54 +216,129 @@ const newFeedback = ref({
   rating: 0,
   comments: '',
   submittedBy: '',
-  date: new Date()
+  // Note: The 'date' field will typically be set by the backend upon creation, 
+  // but we keep it here if the backend needs it or for immediate client-side display.
+  date: new Date() 
 });
 
 // Selected operator
 const selectedOperator = ref({});
 const showAllFeedback = ref(false);
 
-// Computed properties
+const errorMessage = ref(null);
+const loading = ref(false);
+const authStore = useAuthStore(); // Assuming this is needed for user context or tokens
+
+
+// Computed properties (Keep as is)
 const displayedFeedback = computed(() => {
-  return showAllFeedback.value ? feedbacks.value : feedbacks.value.slice(0, 3);
+  // Ensure feedbacks.value is an array and sort by date descending for "recent"
+  const sortedFeedback = feedbacks.value
+    .slice() // create a shallow copy to avoid mutating original
+    .sort((a, b) => new Date(b.date) - new Date(a.date)); 
+    
+  return showAllFeedback.value ? sortedFeedback : sortedFeedback.slice(0, 3);
 });
 
-// Methods
-const selectOperator = (operator) => {
-  selectedOperator.value = operator;
-  newFeedback.value.operatorType = operator.name;
-  modalInstance.show();
+// --- Methods for Data Handling ---
+
+/**
+ * Fetches all feedback entries from the backend API.
+ */
+const fetchFeedback = async () => {
+    loading.value = true;
+    errorMessage.value = null;
+    try {
+        
+        const response = await axios.get('http://127.0.0.1:8000/api/feedback/', {
+            // Example of adding an Authorization header (adjust as per your auth store)
+            headers: {
+                // 'Authorization': `Bearer ${authStore.token}` 
+            }
+        });
+        
+        // Assuming the backend returns an array of feedback objects directly
+        feedbacks.value = response.data; 
+        console.log('Feedback fetched successfully:', feedbacks.value);
+
+    } catch (err) {
+        console.error('Failed to fetch feedback:', err);
+        errorMessage.value = 'Failed to load feedback data from the server.';
+    } finally {
+        loading.value = false;
+    }
+}
+
+/**
+ * Handles the submission of the new feedback form.
+ */
+const submitFeedback = async () => {
+  loading.value = true;
+  errorMessage.value = null;
+
+  try {
+    
+
+ console.log("Submitting Feedback data:", newFeedback.value);
+    const success = await authStore.registerShift(newFeedback.value);
+    if (success) {
+ 
+
+      // Close the modal on success
+      if (modalInstance) modalInstance.hide();
+    } else {
+      // Display the specific error from the backend
+      errorMessage.value = authStore.error?.non_field_errors?.[0] || authStore.error?.detail || 'An unknown error occurred.';
+    }
+  } catch (err) {
+    console.error('Submission failed:', err);
+    errorMessage.value = 'An error occurred during submission. Please try again.';
+  } finally {
+    loading.value = false;
+  }
 };
 
-const submitFeedback = () => {
-  // Add new feedback
-  feedbacks.value.unshift({
-    ...newFeedback.value,
-    date: new Date()
-  });
-  
-  // Reset form
+
+// --- Lifecycle and UI Methods (Keep as is/Minor adjustment) ---
+
+// Initialize modal AND fetch data when component mounts
+onMounted(() => {
+  modalInstance = new Modal(feedbackModal.value);
+  fetchFeedback(); // <-- Fetch initial data here
+});
+
+const selectOperator = (operator) => {
+  selectedOperator.value = operator;
+  // Reset other fields when a new operator is selected
   newFeedback.value = {
-    operatorType: selectedOperator.value.name,
+    operatorType: operator.name,
     type: '',
     rating: 0,
     comments: '',
-    submittedBy: '',
+    submittedBy: newFeedback.value.submittedBy || '', // Keep submittedBy if already entered
     date: new Date()
   };
-  
-  // Close modal
-  modalInstance.hide();
+  modalInstance.show();
 };
 
 const formatDate = (date) => {
-  return format(date, 'MMM dd, yyyy');
+  // Ensure the date object is created if the backend sends a string
+  const dateObject = typeof date === 'string' ? new Date(date) : date;
+  return format(dateObject, 'MMM dd, yyyy');
 };
 
 const getOperatorClass = (operatorType) => {
   const operator = operators.value.find(op => op.name === operatorType);
   return operator ? operator.class : '';
 };
+
+
+const handleLogout = () => {
+    // Assuming useAuthStore has a logout method
+    authStore.logout(); 
+    // You would typically redirect the user to the login page here
+    // e.g., router.push('/login');
+}
 </script>
 
 <style scoped>
