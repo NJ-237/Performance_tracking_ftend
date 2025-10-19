@@ -1,58 +1,58 @@
 <template>
   <div id="app">
     <!-- Sidebar -->
-    <div class="sidebar" style=" background: #1a2035;
-  color: black;">
-      <div class="sidebar-header">
+ <nav class="sidebar" style=" background: #1a2035; color: black;">
+        <div class="sidebar-header">
         <div class="logo">
-          <img src="../assets/img/10_48_34_cimencam_logo.png" alt="Logo">
+          <img src="C:\projects\cimencam_app\frontend\Performance_tracking_ftend\cimencam_ft\src\assets\img\10_48_34_cimencam_logo.png" alt="Logo">
           <span>Dashboard</span>
         </div>
       </div>
       <ul class="nav-links">
         <li>
-          <router-link class="nav-link" to="/dashboard">
+          <router-link class="nav-link" to="/DashboardAdmin">
             <i class="fas fa-home"></i>
             <span>Dashboard</span>
           </router-link>
         </li>
-        <li>
-          <router-link class="nav-link" to="/performance" active-class="active">
-            <i class="fas fa-chart-line"></i>
-            <span>Performance</span>
-          </router-link>
-        </li>
          <li>
-          <router-link class="nav-link" to="/report"> 
-            <i class="fas fa-newspaper"></i>
-            <span>Report</span>
+          <router-link class="nav-link" to="/ReportPerform" active-class="active">
+            <i class="fas fa-sliders-h"></i>
+            <span>CRO</span>
           </router-link>
         </li>
-
-           <li>
-                <router-link class="nav-link" to="/Feedback">
-                    <i class="fas fa-comment-alt"></i>
-                    <span>Feedback</span>
-                </router-link>
-                
-            </li>
-            <li>
-                <router-link class="nav-link" to="/Report">
-                    <i class="fas fa-cog"></i>
-                   <span>Setup</span>
-                </router-link>
-                
-            </li>
-            <li>
-                <router-link class="nav-link" to="/Report">
+        <li>
+          <router-link class="nav-link" to="/ReportPerform"> 
+            <i class="fas fa-shield-alt"></i>
+            <span>Patroller</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link class="nav-link" to="/ReportPerform" active-class="active">
+            <i class="fas fa-user-tie"></i>
+            <span>Chef de quart</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link class="nav-link" to="/feedback">
+            <i class="fas fa-comment-alt"></i>
+            <span>Feedback</span>
+          </router-link>
+        </li>
+        <li>
+          <router-link class="nav-link" to="/setup">
+            <i class="fas fa-cog"></i>
+            <span>Setup</span>
+          </router-link>
+        </li>
+        <li>
+            <button style="color: violet; background: #1a2035;"  @click="handleLogout" class="logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
                     <span>LogOut</span>
-                </router-link>
-                
-            </li>
-        <!-- Other menu items -->
+            </button>
+        </li>
       </ul>
-    </div>
+    </nav>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -131,34 +131,31 @@
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
-                    <th>Date</th>
-                    <th>Shift</th>
-                    <th v-if="selectedEquipment !== 'Expedition'">Production (tons)</th>
-                    <th v-if="selectedEquipment === 'Expedition'">Shipments</th>
-                    <th>Downtime (mins)</th>
-                    <th>Issues</th>
+                    <!-- Dynamic Headers -->
+                    <th v-for="header in tableHeaders" :key="header">{{ header }}</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr v-for="(item, index) in filteredData" :key="index">
-                    <td>{{ item.date }}</td>
-                    <td>{{ item.shift }}</td>
-                    <td v-if="selectedEquipment !== 'Expedition'">{{ item.production }}</td>
-                    <td v-if="selectedEquipment === 'Expedition'">{{ item.shipments }}</td>
-                    <td>{{ item.downtime }}</td>
-                    <td>{{ item.issues }}</td>
-                    <td>
-                      <button class="btn btn-sm btn-primary me-2" @click="editItem(index)">
+                  <tr v-if="isLoading">
+                    <td :colspan="tableHeaders.length + 1" class="text-center text-muted">Loading data...</td>
+                  </tr>
+                  <tr v-else-if="!performanceData || performanceData.length === 0">
+                    <td :colspan="tableHeaders.length + 1" class="text-center text-muted">No data available for {{ selectedEquipment }}</td>
+                  </tr>
+                  <tr v-else v-for="item in performanceData" :key="item.id">
+                    <!-- Dynamic Data Cells -->
+                    <td v-for="key in tableKeys" :key="key">
+                      {{ item[key] }}
+                    </td>
+                    <td id="editbtn">
+                      <button style="width: 50px; height: 50px;"  class="btn btn-sm btn-primary me-2" @click="editItem(item)">
                         <i class="fas fa-edit"></i> Edit
                       </button>
-                      <button class="btn btn-sm btn-danger" @click="deleteItem(index)">
+                      <button style="width: 50px; height: 50px;"  class="btn btn-sm btn-danger" @click="deleteItem(item.id)">
                         <i class="fas fa-trash"></i> Delete
                       </button>
                     </td>
-                  </tr>
-                  <tr v-if="filteredData.length === 0">
-                    <td colspan="7" class="text-center text-muted">No data available for {{ selectedEquipment }}</td>
                   </tr>
                 </tbody>
               </table>
@@ -178,33 +175,12 @@
           </div>
           <div class="modal-body">
             <form @submit.prevent="saveData">
-              <div class="mb-3">
-                <label class="form-label">Date</label>
-                <input type="date" class="form-control" v-model="formData.date" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Shift</label>
-                <select class="form-select" v-model="formData.shift" required>
-                  <option value="Shift 1 (6:00 AM - 2:00 PM)">Shift 1 (6:00 AM - 2:00 PM)</option>
-                  <option value="Shift 2 (2:00 PM - 10:00 PM)">Shift 2 (2:00 PM - 10:00 PM)</option>
-                  <option value="Shift 3 (10:00 PM - 6:00 AM)">Shift 3 (10:00 PM - 6:00 AM)</option>
-                </select>
-              </div>
-              <div class="mb-3" v-if="selectedEquipment !== 'Expedition'">
-                <label class="form-label">Production (tons)</label>
-                <input type="number" class="form-control" v-model="formData.production" step="0.01" required>
-              </div>
-              <div class="mb-3" v-if="selectedEquipment === 'Expedition'">
-                <label class="form-label">Shipments</label>
-                <input type="number" class="form-control" v-model="formData.shipments" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Downtime (minutes)</label>
-                <input type="number" class="form-control" v-model="formData.downtime" required>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Issues</label>
-                <textarea class="form-control" v-model="formData.issues" rows="2"></textarea>
+              <div v-for="field in formFields" :key="field.key" class="mb-3">
+                <label class="form-label">{{ field.label }}</label>
+                <input v-if="field.type === 'date'" type="date" class="form-control" v-model="formData[field.key]" required>
+                <input v-else-if="field.type === 'number'" type="number" class="form-control" v-model="formData[field.key]" :step="field.step || '1'" required>
+                <textarea v-else-if="field.type === 'textarea'" class="form-control" v-model="formData[field.key]" rows="2"></textarea>
+                <input v-else type="text" class="form-control" v-model="formData[field.key]" required>
               </div>
               <div class="d-flex justify-content-end">
                 <button type="button" class="btn btn-secondary me-2" @click="closeModal">Cancel</button>
@@ -218,140 +194,331 @@
   </div>
 </template>
 
-<script>
-import { ref, computed, onMounted } from 'vue';
+<script setup>
+import { ref, watch, onMounted, computed } from 'vue';
 import { Modal } from 'bootstrap';
+import axios from 'axios';
 
-export default {
-  setup() {
-    // Equipment selection
-    const selectedEquipment = ref('BK1');
-    
-    // Sample data - in a real app, this would come from an API
-    const performanceData = ref([
-      { id: 1, equipment: 'BK1', date: '2023-06-01', shift: 'Shift 1 (6:00 AM - 2:00 PM)', production: 1250, downtime: 45, issues: 'Conveyor belt maintenance' },
-      { id: 2, equipment: 'BK1', date: '2023-06-01', shift: 'Shift 2 (2:00 PM - 10:00 PM)', production: 1320, downtime: 28, issues: 'No issues' },
-      { id: 3, equipment: 'BK4', date: '2023-06-01', shift: 'Shift 1 (6:00 AM - 2:00 PM)', production: 1180, downtime: 65, issues: 'Kiln temperature fluctuation' },
-      { id: 4, equipment: 'BK5', date: '2023-06-01', shift: 'Shift 3 (10:00 PM - 6:00 AM)', production: 1420, downtime: 15, issues: 'Regular operation' },
-      { id: 5, equipment: 'Secheur', date: '2023-06-01', shift: 'Shift 2 (2:00 PM - 10:00 PM)', production: 980, downtime: 32, issues: 'Moisture sensor calibration' },
-      { id: 6, equipment: 'Port', date: '2023-06-01', shift: 'Shift 1 (6:00 AM - 2:00 PM)', production: 850, downtime: 75, issues: 'Loading delay due to weather' },
-      { id: 7, equipment: 'Expedition', date: '2023-06-01', shift: 'Shift 2 (2:00 PM - 10:00 PM)', shipments: 18, downtime: 0, issues: 'All shipments on time' }
-    ]);
+// Equipment selection and data
+const selectedEquipment = ref('BK1');
+const performanceData = ref([]);
+const isLoading = ref(true);
 
-    // Form data
-    const formData = ref({
-      id: null,
-      equipment: '',
-      date: '',
-      shift: '',
-      production: '',
-      shipments: '',
-      downtime: '',
-      issues: ''
-    });
+// Form data for the modal
+const formData = ref({});
 
-    // Modal state
-    const isEditing = ref(false);
-    const currentIndex = ref(null);
-    const dataModal = ref(null);
-    let modalInstance = null;
+// Modal state
+const isEditing = ref(false);
+const dataModal = ref(null);
+let modalInstance = null;
 
-    // Computed property to filter data by selected equipment
-    const filteredData = computed(() => {
-      return performanceData.value.filter(item => item.equipment === selectedEquipment.value);
-    });
+// The base URL for your Django API
+const BASE_URL = 'http://localhost:8000/api/';
 
-    // Initialize modal
-    onMounted(() => {
-      modalInstance = new Modal(dataModal.value);
-    });
+// --- DYNAMIC CONFIGURATION ---
+// This is the core of the solution. We define the headers,
+// API endpoints, and form fields for each equipment type here.
+const equipmentConfig = {
+  'BK1': {
+    endpoint: 'mill/',
+    headers: ['ID', 'Shift', ' Date', 'Production', 'Clinker Debut', 'Clinker fin','Clinker Diff', 'Pouzzolane Debut', 'Pouzzolane Fin', 'Pouzzolane Diff', 'Gypse Debut', 'Gypse Fin', 'Gypse Diff', 'Fine Debut', 'Fine Fin', 'Fine Diff','SO3', 'Blaines', 'Comments'],
+    keys: ['id', 'shift_number', 'date', 'production', 'clinker_debut', 'clinker_fin', 'clinker_Difference', 'pouzzolane_debut', 'pouzzolane_fin', 'pouzzolane_Difference','gypse_debut','gypse_fin', 'gypse_Difference', 'fine_debut', 'fine_fin', 'fine_Difference', 'SO3', 'Blaines', 'commentaires'],
+    formFields: [
+      { key: 'date', label: 'Date', type: 'date' },
+      { key: 'shift_number', label: 'Shift', type: 'number' },
+      { key: 'clinker_debut', label: 'Clinker Debut', type: 'number', step: '0.01' },
+      { key: 'clinker_fin', label: 'Clinker Fin', type: 'number', step: '0.01' },
+      { key: 'clinker_Difference', label: 'Clinker Difference', type: 'number', step: '0.01' },
+      { key: 'pouzzolane_debut', label: 'Pouzzolane Debut', type: 'number', step: '0.01' },
+      { key: 'pouzzolane_fin', label: 'Pouzzolane Fin', type: 'number', step: '0.01' },
+      { key: 'pouzzolane_Difference', label: 'Pouzzolane Difference', type: 'number', step: '0.01' },
+      { key: 'gypse_debut', label: 'Gypse Debut', type: 'number', step: '0.01' },
+      { key: 'gypse_fin', label: 'Gypse Fin', type: 'number', step: '0.01' },
+      { key: 'gypse_Difference', label: 'Gypse Difference', type: 'number', step: '0.01' },
+      { key: 'fine_debut', label: 'Fine Debut', type: 'number', step: '0.01' },
+      { key: 'fine_fin', label: 'Fine Fin', type: 'number', step: '0.01' },
+      { key: 'fine_Difference', label: 'Fine Difference', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_debut', label: 'Compteur Horaire Debut', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_fin', label: 'Compteur Horaire Fin', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_Difference', label: 'Compteur Horaire Difference', type: 'number', step: '0.01' },
+      { key: 'production', label: 'Production', type: 'number' },
+      { key: 'SO3', label: 'SO3', type: 'number', step: '0.01' },
+      { key: 'Blaines', label: 'Blaines', type: 'number', step: '0.01' },
+      { key: 'no_godets_receptions', label: 'No Godets Receptions', type: 'number', step: '0.01' },
+      { key: 'situation_entree_quart', label: 'Situation Entree Quart', type: 'text' },
+      { key: 'ensilage_silo', label: 'Ensilage Silo', type: 'text' },
+      { key: 'commentaires', label: 'Comments', type: 'textarea' },
+    ]
+  },
+  'BK4': {
+    endpoint: 'mill/',
+    headers: ['ID', 'Shift', ' Date', 'Production','Clinker Debut', 'Clinker fin','Clinker Diff', 'Pouzzolane Debut', 'Pouzzolane Fin', 'Pouzzolane Diff', 'Gypse Debut', 'Gypse Fin', 'Gypse Diff', 'Fine Debut', 'Fine Fin', 'Fine Diff','SO3', 'Blaines', 'Comments'],
+    keys: ['id', 'shift_number', 'date', 'production', 'clinker_debut', 'clinker_fin', 'clinker_Difference', 'pouzzolane_debut', 'pouzzolane_fin', 'pouzzolane_Difference','gypse_debut','gypse_fin', 'gypse_Difference', 'fine_debut', 'fine_fin', 'fine_Difference', 'SO3', 'Blaines', 'commentaires'],
+    formFields: [
+      { key: 'date', label: 'Date', type: 'date' },
+      { key: 'shift_number', label: 'Shift', type: 'number' },
+      { key: 'clinker_debut', label: 'Clinker Debut', type: 'number', step: '0.01' },
+      { key: 'clinker_fin', label: 'Clinker Fin', type: 'number', step: '0.01' },
+      { key: 'clinker_Difference', label: 'Clinker Difference', type: 'number', step: '0.01' },
+      { key: 'pouzzolane_debut', label: 'Pouzzolane Debut', type: 'number', step: '0.01' },
+      { key: 'pouzzolane_fin', label: 'Pouzzolane Fin', type: 'number', step: '0.01' },
+      { key: 'pouzzolane_Difference', label: 'Pouzzolane Difference', type: 'number', step: '0.01' },
+      { key: 'gypse_debut', label: 'Gypse Debut', type: 'number', step: '0.01' },
+      { key: 'gypse_fin', label: 'Gypse Fin', type: 'number', step: '0.01' },
+      { key: 'gypse_Difference', label: 'Gypse Difference', type: 'number', step: '0.01' },
+      { key: 'fine_debut', label: 'Fine Debut', type: 'number', step: '0.01' },
+      { key: 'fine_fin', label: 'Fine Fin', type: 'number', step: '0.01' },
+      { key: 'fine_Difference', label: 'Fine Difference', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_debut', label: 'Compteur Horaire Debut', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_fin', label: 'Compteur Horaire Fin', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_Difference', label: 'Compteur Horaire Difference', type: 'number', step: '0.01' },
+      { key: 'production', label: 'Production', type: 'number' },
+      { key: 'SO3', label: 'SO3', type: 'number', step: '0.01' },
+      { key: 'Blaines', label: 'Blaines', type: 'number', step: '0.01' },
+      { key: 'no_godets_receptions', label: 'No Godets Receptions', type: 'number', step: '0.01' },
+      { key: 'situation_entree_quart', label: 'Situation Entree Quart', type: 'text' },
+      { key: 'ensilage_silo', label: 'Ensilage Silo', type: 'text' },
+      { key: 'commentaires', label: 'Comments', type: 'textarea' },
+    ]
+  },
+  'BK5': {
+    endpoint: 'mill/',
+    headers: ['ID', 'Shift', ' Date', 'Production', 'Clinker Debut', 'Clinker fin','Clinker Diff', 'Pouzzolane Debut', 'Pouzzolane Fin', 'Pouzzolane Diff', 'Gypse Debut', 'Gypse Fin', 'Gypse Diff', 'Fine Debut', 'Fine Fin', 'Fine Diff','SO3', 'Blaines', 'Comments'],
+    keys: ['id', 'shift_number', 'date', 'production', 'clinker_debut', 'clinker_fin', 'clinker_Difference', 'pouzzolane_debut', 'pouzzolane_fin', 'pouzzolane_Difference','gypse_debut','gypse_fin', 'gypse_Difference', 'fine_debut', 'fine_fin', 'fine_Difference', 'SO3', 'Blaines', 'commentaires'],
+    formFields: [
+      { key: 'date', label: 'Date', type: 'date' },
+      { key: 'shift_number', label: 'Shift', type: 'number' },
+      { key: 'clinker_debut', label: 'Clinker Debut', type: 'number', step: '0.01' },
+      { key: 'clinker_fin', label: 'Clinker Fin', type: 'number', step: '0.01' },
+      { key: 'clinker_Difference', label: 'Clinker Difference', type: 'number', step: '0.01' },
+      { key: 'pouzzolane_debut', label: 'Pouzzolane Debut', type: 'number', step: '0.01' },
+      { key: 'pouzzolane_fin', label: 'Pouzzolane Fin', type: 'number', step: '0.01' },
+      { key: 'pouzzolane_Difference', label: 'Pouzzolane Difference', type: 'number', step: '0.01' },
+      { key: 'gypse_debut', label: 'Gypse Debut', type: 'number', step: '0.01' },
+      { key: 'gypse_fin', label: 'Gypse Fin', type: 'number', step: '0.01' },
+      { key: 'gypse_Difference', label: 'Gypse Difference', type: 'number', step: '0.01' },
+      { key: 'fine_debut', label: 'Fine Debut', type: 'number', step: '0.01' },
+      { key: 'fine_fin', label: 'Fine Fin', type: 'number', step: '0.01' },
+      { key: 'fine_Difference', label: 'Fine Difference', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_debut', label: 'Compteur Horaire Debut', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_fin', label: 'Compteur Horaire Fin', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_Difference', label: 'Compteur Horaire Difference', type: 'number', step: '0.01' },
+      { key: 'production', label: 'Production', type: 'number' },
+      { key: 'SO3', label: 'SO3', type: 'number', step: '0.01' },
+      { key: 'Blaines', label: 'Blaines', type: 'number', step: '0.01' },
+      { key: 'no_godets_receptions', label: 'No Godets Receptions', type: 'number', step: '0.01' },
+      { key: 'situation_entree_quart', label: 'Situation Entree Quart', type: 'text' },
+      { key: 'ensilage_silo', label: 'Ensilage Silo', type: 'text' },
+      { key: 'commentaires', label: 'Comments', type: 'textarea' },
+    ]
+  },
+  'Secheur': {
+    endpoint: 'dryer/',
+    headers: ['ID', 'Shift', 'PZ Humide Debut', 'PZ Humide Fin', 'PZ Humide Diff', 'Bande Melange Debut', 'Bande Melange Fin', 'Bande Melange Diff', 'Compteur Horaire Debut', 'Compteur Horaire Fin', 'Compteur Horaire Difference', 'Quality', 'Production', 'Humidites Entree', 'Humidites Sortie', 'nbre_godets', 'poids_godets', 'debit', 'situation_entree_quart', 'ensilage_silo', 'Comments'],
+    keys: ['id', 'shift_number', 'PZ_humide_debut', 'PZ_humide_fin', 'PZ_humide_Difference', 'bande_melange_debut', 'bande_melange_fin', 'bande_melange_Difference', 'compteur_horaire_debut', 'compteur_horaire_fin', ' compteur_horaire_Difference', 'quality', 'production', 'humidites_entree', 'humidites_sortie', 'nbre_godets', 'poids_godets', 'debit', 'situation_entree_quart', 'ensilage_silo', 'commentaires'],
+    formFields: [
+      { key: 'date', label: 'Date', type: 'date' },
+      { key: 'shift_number', label: 'Shift', type: 'number' },
+      { key: 'PZ_humide_debut', label: 'PZ Humide Debut', type: 'number', step: '0.01' },
+      { key: 'PZ_humide_fin', label: 'PZ Humide Fin', type: 'number', step: '0.01' },
+      { key: 'PZ_humide_Difference', label: 'PZ Humide Difference', type: 'number', step: '0.01' },
+      { key: 'bande_melange_debut', label: 'Bande Melange Debut', type: 'number', step: '0.01' },
+      { key: 'bande_melange_fin', label: 'Bande Melange Fin', type: 'number', step: '0.01' },
+      { key: 'bande_melange_Difference', label: 'Bande Melange Difference', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_debut', label: 'Compteur Horaire Debut', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_fin', label: 'Compteur Horaire Fin', type: 'number', step: '0.01' },
+      { key: 'compteur_horaire_Difference', label: 'Compteur Horaire Difference', type: 'number', step: '0.01' },
+      { key: 'production', label: 'Production', type: 'number' },
+      { key: 'humidites_entree', label: 'Humidites Entree', type: 'number', step: '0.01' },
+      { key: 'humidites_sortie', label: 'Humidites Sortie', type: 'number', step: '0.01' },
+      { key: 'nbre_godets', label: 'Nombre Godets', type: 'number' },
+      { key: 'poids_godets', label: 'Poids Godets', type: 'number', step: '0.01' },
+      { key: 'debit', label: 'Debit', type: 'number', step: '0.01' },
+      { key: 'situation_entree_quart', label: 'Situation Entree Quart', type: 'text' },
+      { key: 'ensilage_silo', label: 'Ensilage Silo', type: 'text' },
+      { key: 'commentaires', label: 'Comments', type: 'textarea' },
+    ]
+  },
+  'Port': {
+    endpoint: 'port/',
+    headers: ['ID', 'Shift', 'Compteur Debut', 'Compteur Fin', 'Dechargement', 'Comments'],
+    keys: ['id', 'shift_number', 'compteur_debut', 'compteur_fin', 'dechargement', 'commentaires'],
+    formFields: [
+      { key: 'date', label: 'Date', type: 'date' },
+      { key: 'shift_number', label: 'Shift', type: 'number' },
+      { key: 'debut', label: 'Debut', type: 'date' },
+      { key: 'fin', label: 'Fin', type: 'date' },
+      { key: 'duree', label: 'Duree', type: 'number', step: '0.01' },
+      { key: 'compteur_debut', label: 'Compteur Debut', type: 'number', step: '0.01' },
+      { key: 'compteur_fin', label: 'Compteur Fin', type: 'number', step: '0.01' },
+      { key: 'dechargement', label: 'Dechargement', type: 'number', step: '0.01' },
+      { key: 'situation_entree_quart', label: 'Situation Entree Quart', type: 'text' },
+      { key: 'ensilage_silo', label: 'Ensilage Silo', type: 'text' },
+      { key: 'commentaires', label: 'Comments', type: 'textarea' },
+    ]
+  },
+  'Expedition': {
+    endpoint: 'expedition/',
+    headers: ['ID', 'Shift', 'KK Nomayos KK', 'KK Nomayos NbreCamion', 'KK Nomayos Tonnage', 'Gypse Nomayos KK', 'Gypse Nomayos NbreCamion', 'Gypse Nomayos Tonnage', 'Gypse Figuil KK', 'Gypse Figuil NbreCamion', 'Gypse Figuil Tonnage', 'Petcoke Figuil KK', 'Petcoke Figuil NbreCamion', 'Petcoke Figuil Tonnage', 'KK Dangote KK', 'KK Dangote NbreCamion', 'KK Dangote Tonnage', 'KK Cimaf KK', 'KK Cimaf NbreCamion', 'KK Cimaf Tonnage', 'KK Miraco KK', 'KK Miraco NbreCamion', 'KK Miraco Tonnage', 'Reception rejets', 'Provenance lieu', 'Nbre Camion', 'Tonnage', 'Stock Receptions', 'Godets Biomasse', 'Godets Receptions', 'Godets Geocycle'],
+    keys: ['id', 'shift_number', 'kk_chargee_nomayos_kk', 'kk_chargee_nomayos_NbreCamion', 'kk_chargee_nomayos_Tonnage', 'gypse_chargee_nomayos_kk', 'gypse_chargee_nomayos_NbreCamion', 'gypse_chargee_nomayos_Tonnage', 'gypse_figuil_kk', 'gypse_figuil_NbreCamion', 'gypse_figuil_Tonnage', 'petcoke_figuil_kk', 'petcoke_figuil_NbreCamion', 'petcoke_figuil_Tonnage', 'kk_dangote_kk', 'kk_dangote_NbreCamion', 'kk_dangote_Tonnage', 'kk_cimaf_kk', 'kk_cimaf_NbreCamion', 'kk_cimaf_Tonnage', 'kk_miraco_kk', 'kk_miraco_NbreCamion', 'kk_miraco_Tonnage', 'reception_camions_rejets', 'provenance_lieu', 'nbre_camion', 'tonnage', 'tonnage_stock_receptions', 'no_godets_cim_biomasse', 'godets_geocycle_biomasse', 'no_godets_receptions'],
+    formFields: [
+      { key: 'date', label: 'Date', type: 'date' },
+      { key: 'shift_number', label: 'Shift', type: 'number' },
+      { key: 'kk_chargee_nomayos_kk', label: 'KK Chargee Nomayos KK', type: 'text' },
+      { key: 'kk_chargee_nomayos_NbreCamion', label: 'KK Nomayos Nbre Camion', type: 'number' },
+      { key: 'kk_chargee_nomayos_Tonnage', label: 'KK Nomayos Tonnage', type: 'number', step: '0.01' },
+      { key: 'gypse_chargee_nomayos_kk', label: 'Gypse Nomayos KK', type: 'number' },
+      { key: 'gypse_chargee_nomayos_NbreCamion', label: 'Gypse Nomayos Nbre Camion', type: 'number' },
+      { key: 'gypse_chargee_nomayos_Tonnage', label: 'Gypse Nomayos Tonnage', type: 'number', step: '0.01' },
+      { key: 'gypse_figuil_kk', label: 'Gypse Figuil KK', type: 'number' },
+      { key: 'gypse_figuil_NbreCamion', label: 'Gypse Figuil Nbre Camion', type: 'number' },
+      { key: 'gypse_figuil_Tonnage', label: 'Gypse Figuil Tonnage', type: 'number', step: '0.01' },
+      { key: 'petcoke_figuil_kk', label: 'Petcoke Figuil kk', type: 'number', step: '0.01' },
+      { key: 'petcoke_figuil_NbreCamion', label: 'Petcoke Figuil NbreCamion', type: 'number', step: '0.01' },
+      { key: 'petcoke_figuil_Tonnage', label: 'Petcoke Figuil Tonnage', type: 'number', step: '0.01' },
+      { key: 'kk_dangote_kk', label: 'KK Dangote KK', type: 'number', step: '0.01' },
+      { key: 'kk_dangote_NbreCamion', label: 'KK Dangote NbreCamion', type: 'number', step: '0.01' },
+      { key: 'kk_dangote_Tonnage', label: 'KK Dangote Tonnage', type: 'number', step: '0.01' },
+      { key: 'kk_miraco_kk', label: 'KK Miraco Tonnage', type: 'number', step: '0.01' },
+      { key: 'kk_miraco_NbreCamion', label: 'KK Miraco Tonnage', type: 'number', step: '0.01' },
+      { key: 'kk_miraco_Tonnage', label: 'KK Miraco Tonnage', type: 'number', step: '0.01' },
+      { key: 'kk_cimaf_kk', label: 'KK Cimaf Tonnage', type: 'number', step: '0.01' },
+      { key: 'kk_cimaf_NbreCamion', label: 'KK Cimaf Tonnage', type: 'number', step: '0.01' },
+      { key: 'kk_cimaf_Tonnage', label: 'KK Cimaf Tonnage', type: 'number', step: '0.01' },
+      { key: 'reception_camions_rejets', label: 'Camions Rejets', type: 'number' },
+      { key: 'provenance_lieu', label: 'Provenance Lieu', type: 'text' },
+      { key: 'nbre_camion', label: 'Nbre Camion', type: 'number' },
+      { key: 'tonnage', label: 'Tonnage', type: 'number', step: '0.01' },
+      { key: 'no_godets_cim_biomasse', label: 'Godets CIM Biomasse', type: 'number' },
+      { key: 'godets_geocycle_biomasse', label: 'Godets Geocycle Biomasse', type: 'number' },
+      { key: 'no_godets_receptions', label: 'Godets Receptions', type: 'number' },
+      { key: 'tonnage_stock_receptions', label: 'Tonnage Stock Receptions', type: 'number', step: '0.01' },
+    ]
+  },
+};
 
-    // Select equipment
-    const selectEquipment = (equipment) => {
-      selectedEquipment.value = equipment;
-    };
+// Computed properties to get the dynamic values based on the selection
+const tableHeaders = computed(() => {
+  const config = equipmentConfig[selectedEquipment.value];
+  return config ? config.headers : [];
+});
 
-    // Open modal for adding new data
-    const openAddModal = () => {
-      resetForm();
-      isEditing.value = false;
-      formData.value.equipment = selectedEquipment.value;
-      modalInstance.show();
-    };
+const tableKeys = computed(() => {
+  const config = equipmentConfig[selectedEquipment.value];
+  return config ? config.keys : [];
+});
 
-    // Open modal for editing
-    const editItem = (index) => {
-      const item = filteredData.value[index];
-      formData.value = { ...item };
-      isEditing.value = true;
-      currentIndex.value = performanceData.value.findIndex(i => i.id === item.id);
-      modalInstance.show();
-    };
+const formFields = computed(() => {
+  const config = equipmentConfig[selectedEquipment.value];
+  return config ? config.formFields : [];
+});
 
-    // Delete item
-    const deleteItem = (index) => {
-      if (confirm('Are you sure you want to delete this record?')) {
-        const item = filteredData.value[index];
-        performanceData.value = performanceData.value.filter(i => i.id !== item.id);
-      }
-    };
+// Fetch data from the appropriate API endpoint
+const fetchData = async () => {
+  isLoading.value = true;
+  const config = equipmentConfig[selectedEquipment.value];
+  if (!config) {
+    console.error('Unknown equipment selected');
+    performanceData.value = [];
+    isLoading.value = false;
+    return;
+  }
 
-    // Save data (add or update)
-    const saveData = () => {
-      if (isEditing.value) {
-        // Update existing item
-        performanceData.value[currentIndex.value] = { ...formData.value };
-      } else {
-        // Add new item
-        const newId = performanceData.value.length > 0 
-          ? Math.max(...performanceData.value.map(i => i.id)) + 1 
-          : 1;
-        performanceData.value.push({ 
-          ...formData.value, 
-          id: newId 
-        });
-      }
-      closeModal();
-    };
-
-    // Close modal
-    const closeModal = () => {
-      modalInstance.hide();
-    };
-
-    // Reset form
-    const resetForm = () => {
-      formData.value = {
-        id: null,
-        equipment: selectedEquipment.value,
-        date: '',
-        shift: '',
-        production: '',
-        shipments: '',
-        downtime: '',
-        issues: ''
-      };
-    };
-
-    return {
-      selectedEquipment,
-      performanceData,
-      filteredData,
-      formData,
-      isEditing,
-      dataModal,
-      selectEquipment,
-      openAddModal,
-      editItem,
-      deleteItem,
-      saveData,
-      closeModal
-    };
+  try {
+    const response = await axios.get(`${BASE_URL}${config.endpoint}`);
+    performanceData.value = response.data;
+  } catch (error) {
+    console.error(`Error fetching data for ${selectedEquipment.value}:`, error);
+    performanceData.value = [];
+  } finally {
+    isLoading.value = false;
   }
 };
+
+// Initialize modal on component mount
+onMounted(() => {
+  modalInstance = new Modal(dataModal.value);
+  fetchData();
+});
+
+// Watch for changes in selected equipment and fetch new data
+watch(selectedEquipment, (newValue, oldValue) => {
+  if (newValue !== oldValue) {
+    fetchData();
+  }
+});
+
+// Select equipment and trigger data fetch
+const selectEquipment = (equipment) => {
+  selectedEquipment.value = equipment;
+};
+
+// Close modal
+const closeModal = () => {
+  modalInstance.hide();
+  resetForm();
+};
+
+// Reset form fields
+const resetForm = () => {
+  formData.value = {};
+};
+
+// Open modal for editing
+const editItem = (item) => {
+  formData.value = { ...item };
+  isEditing.value = true;
+  modalInstance.show();
+};
+
+// Delete item
+const deleteItem = async (itemId) => {
+  if (confirm('Are you sure you want to delete this record?')) {
+    const config = equipmentConfig[selectedEquipment.value];
+    if (!config) {
+      console.error('Unknown equipment selected');
+      return;
+    }
+    try {
+      await axios.delete(`${BASE_URL}${config.endpoint}${itemId}/`);
+      performanceData.value = performanceData.value.filter(item => item.id !== itemId);
+      console.log('Record deleted successfully.');
+    } catch (error) {
+      console.error('Error deleting record:', error);
+    }
+  }
+};
+
+
+// Save data (add or update)
+const saveData = async () => {
+  const config = equipmentConfig[selectedEquipment.value];
+  if (!config) {
+    console.error('Unknown equipment selected');
+    return;
+  }
+
+  const dataToSave = {
+    ...formData.value,
+    // Note: 'equipement_name' is not in your Django models, so we remove it.
+  };
+
+  try {
+    if (isEditing.value) {
+      await axios.put(`${BASE_URL}${config.endpoint}${formData.value.id}/`, dataToSave);
+    } else {
+      await axios.post(`${BASE_URL}${config.endpoint}`, dataToSave);
+    }
+    closeModal();
+    fetchData(); // Refresh the data after saving
+  } catch (error) {
+    console.error('Error saving data:', error);
+  }
+};
+
 </script>
 
-<style >
+<style scoped>
 /* Sidebar Styles */
 .sidebar {
   width: 250px;
@@ -502,5 +669,53 @@ export default {
   .modal-dialog {
     margin: 0.5rem;
   }
+}
+ /* Delete and edit button */
+ #editbtn{
+  display: flex; /* This is the most important part */
+  gap: 10px; /* Adds space between the buttons */
+  justify-content: center; /* Aligns the buttons to the center of the container */
+  
+}
+ 
+
+/* --- Dropdown specific styles (Corrected) --- */
+
+/* Style the parent list item that will trigger the dropdown */
+.nav-dropdown {
+    position: relative;
+}
+
+/* Style the dropdown menu itself */
+.dropdown-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-height: 0; /* Initially hide the menu by setting its height to 0 */
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out; /* Smooth transition */
+    background-color: #2c3a51;
+    border-radius: 6px;
+    margin-top: 5px;
+}
+
+/* Style the individual dropdown links */
+.dropdown-menu-item a {
+    padding: 10px 15px 10px 45px; /* Add padding to push it to the right */
+    font-size: 0.9em;
+    display: block;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+}
+
+/* Change color on hover for dropdown links */
+.dropdown-menu-item a:hover {
+    background-color: rgba(67, 97, 238, 0.2);
+    color: white;
+}
+
+/* The key rule: show the dropdown when the parent `li` is hovered */
+.nav-dropdown:hover > .dropdown-menu {
+    max-height: 200px; /* A large enough value to show the full content */
 }
 </style>

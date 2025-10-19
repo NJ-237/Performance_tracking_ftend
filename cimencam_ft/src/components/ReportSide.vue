@@ -4,8 +4,7 @@
       <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Sidebar -->
-    <div style=" background: #1a2035;
-  color: black;" class="sidebar" id="sidebar">
+    <div style=" background: #1a2035; color: black;" class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <img src="@/assets/img/10_48_34_cimencam_logo.png" alt="Cimencam Logo">

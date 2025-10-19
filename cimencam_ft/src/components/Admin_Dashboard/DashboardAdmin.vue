@@ -18,19 +18,19 @@
           </router-link>
         </li>
          <li>
-          <router-link class="nav-link" to="/CRO" active-class="active">
+          <router-link class="nav-link" to="/ReportPerform" active-class="active">
             <i class="fas fa-sliders-h"></i>
             <span>CRO</span>
           </router-link>
         </li>
         <li>
-          <router-link class="nav-link" to="/Patroller"> 
+          <router-link class="nav-link" to="/ReportPerform"> 
             <i class="fas fa-shield-alt"></i>
             <span>Patroller</span>
           </router-link>
         </li>
         <li>
-          <router-link class="nav-link" to="/CDQ" active-class="active">
+          <router-link class="nav-link" to="/ReportPerform" active-class="active">
             <i class="fas fa-user-tie"></i>
             <span>Chef de quart</span>
           </router-link>

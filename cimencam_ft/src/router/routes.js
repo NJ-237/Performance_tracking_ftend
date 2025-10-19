@@ -27,7 +27,7 @@ const routes = createRouter({
     //   // this generates a separate chunk (About.[hash].js) for this route
     //   // which is lazy-loaded when the route is visited.
     //   path: '/',  name: 'home', component: HomeView,  },
-    { path: '/login',name: 'about', component: LoginView },
+    { path: '/login',name: 'login', component: LoginView },
     { path: '/Register', component: RegistrationForm },
     { path: '/Dashboard', name:'Dashboard', component: Dashboard , meta: { requiresAuth: true } // Protected route
     },

@@ -105,7 +105,12 @@
                         <div class="card kpi-card kpi-info">
                             <div class="card-body">
                                 <div class="kpi-title">SHIFT NUMBER</div>
-                                <div class="kpi-value">{{ Shift__shift_number }}</div>
+                                <!-- <div class="kpi-value">{{ Shift__shift_number }}</div> -->
+                                <div class="kpi-value"> 
+                                    <li v-for="shift in shiftsData" :key="shift.id">
+                                        <strong>Shift {{ shift.number }}</strong> on {{ shift.date.substring(0, 10) }}
+                                    </li>
+                                </div>
                                 <div class="kpi-subtitle">
                                     <span class="trend-down"><i class="fas fa-arrow-down"></i> {{ kpiData.errorsTrend }}</span>
                                     Active
@@ -189,13 +194,7 @@
                             </div>
                             <div class="card-body">
                                 <div class="histogram-container">
-                                    <h2>Performance History for: {{ operatorName || 'Loading...' }}</h2>
-                                    
-                                    <div v-if="chartData.datasets.length" class="chart-wrapper">
-                                    <Bar :data="chartData" :options="chartOptions" />
-                                    </div>
-                                    <p v-else-if="!loading">No performance data found for this operator.</p>
-                                    <p v-else>Loading performance data...</p>
+                                    <canvas id="histogram"></canvas>
                                 </div>
                             </div>
                         </div>
@@ -266,21 +265,22 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/auth'
 import { ref, onMounted } from 'vue';
+
+
 // import { useRoute } from 'vue-router';
 
 // import Chart from 'chart.js/auto'; // If you're going to render the chart
 
 // Using vue-chartjs wrappers makes this easier
-import { Bar } from 'vue-chartjs';
+
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
 
 // Register Chart.js components globally for the wrapper
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 
-const loading = ref(true);
-const operatorName = ref('');
-const chartData = ref({ labels: [], datasets: [] });
+
+
 const username = ref('User');
 const userAvatar = ref('path_to_avatar.jpg');
 const authStore = useAuthStore();
@@ -342,21 +342,23 @@ const fetchData = async () => {
     // 🧮 Map backend data to Vue cards
     kpiData.value.arret_par_incident = data.arret_par_incident;
     kpiData.value.PRI = data.PRI;
-    kpiData.value.total_production = data.total_production;
+    kpiData.value.total_production = data.total_production ? data.total_production.toFixed(2) : '0.00';
 
-    kpiData.value.Ecart_type = data.Ecart_type;
     kpiData.value.HNA = data.HNA;
-    kpiData.value.total_optimisation = data.total_optimisation;
+    kpiData.value.total_optimisation = data.total_optimisation ? data.total_optimisation.toFixed(2) : '0.00';
 
     kpiData.value.Blaines = data.Blaines;
     kpiData.value.temp = data.temp;
-    kpiData.value.total_qualites = data.total_qualites;
+    kpiData.value.total_qualites = data.total_qualites ? data.total_qualites.toFixed(2) : '0.00';
+    
 
   } catch (error) {
     console.error('Error fetching KPIs:', error);
+    
   }
 };
 
+// let chartInstance = null;
 
 const handleLogout = () => {
     authStore.logout();
@@ -403,20 +405,22 @@ onMounted(() => {
         }
         
         .sidebar {
-            position: fixed;
             top: 0;
-            bottom: 0;
             left: 0;
-            z-index: 100;
-            padding: 0;
-            box-shadow: inset -1px 0 0 rgba(0, 0, 0, 0.1);
-            background-color: #4e73df;
-            background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
-            background-size: cover;
-            width: 14rem;
+           
+
+            width: 250px;
+            background: #1a2035;
+            color: black;
+            height: 100vh;
+            position: fixed;
+            padding: 20px 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+            overflow-y: auto;
         }
         
-        .sidebar-brand {
+        /* .sidebar-brand {
             height: 4.375rem;
             text-decoration: none;
             font-size: 1.2rem;
@@ -427,37 +431,65 @@ onMounted(() => {
             letter-spacing: 0.05rem;
             z-index: 1;
             color: #fff;
-        }
+        } */
         
-        .sidebar-divider {
+        /* .sidebar-divider {
             margin: 0 1rem 1rem;
             border-top: 1px solid rgba(255, 255, 255, 0.15);
         }
-        
-        .nav-item {
+         */
+        /* .nav-item {
             position: relative;
             justify-content: space-between;
             gap: 10px;
             font-size: larger;
             font-weight: 100px;
             padding-top: 10px;
-        }
+        } */
         
-        .nav-link {
-            display: block;
-            padding: 10px;
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: all 0.15s;
-        }
-        
-        .nav-link i {
-            margin-right: 0.5rem;
-        }
-        
-        .nav-link:hover {
-            color: #fff;
-        }
+       .logo {
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.logo img {
+  width: 40px;
+  height: 40px;
+  margin-right: 10px;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0 15px;
+}
+
+.nav-links li {
+  margin-bottom: 5px;
+}
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  color: rgba(255,255,255,0.7);
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  background: rgba(67, 97, 238, 0.2);
+  color: white;
+}
+
+.nav-links a i {
+  margin-right: 10px;
+  width: 20px;
+  text-align: center;
+  font-size: 1.1rem;
+}
         
         .active {
             color: #fff !important;
